@@ -20,7 +20,6 @@ local Ruby install needed:
 make serve PLUGIN=energy_pulse    # live-reload preview, http://localhost:4567
 make lint PLUGIN=energy_pulse     # validate against trmnlp best practices
 make build PLUGIN=energy_pulse    # render static output to <plugin>/_build
-make push PLUGIN=energy_pulse     # upload to TRMNL (needs TRMNL_API_KEY)
 ```
 
 `PLUGIN` is required for every target. See each plugin's own README for
