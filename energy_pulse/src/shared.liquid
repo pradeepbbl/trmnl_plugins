@@ -10,7 +10,7 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
   {%- assign unit_note = "wholesale, excl. grid fees" -%}
 {%- endif -%}
 
-{%- comment -%} "off" in the usage_examples field hides the cost row entirely. {%- endcomment -%}
+{%- comment -%} "off" or "no" in the usage_examples field hides the cost row entirely. {%- endcomment -%}
 {%- assign usage_setting = trmnl.plugin_settings.custom_fields_values.usage_examples | strip | downcase -%}
 {%- assign show_usages = true -%}
 {%- if usage_setting == "off" or usage_setting == "no" -%}
@@ -34,9 +34,9 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
 <div class="layout layout--col layout--center gap--small">
   <span class="title title--small">{{ error | default: "No price data" }}</span>
   {% if error_detail %}
-    <span class="label label--small label--gray-out text--center">{{ error_detail }}</span>
+    <span class="label label--small label--gray text--center">{{ error_detail }}</span>
   {% else %}
-    <span class="label label--small label--gray-out text--center">
+    <span class="label label--small label--gray text--center">
       Couldn't load price data. Check plugin settings or try again shortly.
     </span>
   {% endif %}

@@ -4,9 +4,9 @@
 <div class="layout layout--row portrait:layout--col gap--medium">
 
   <div class="flex flex--col flex--left gap--xsmall grow-0 shrink-0 w--[180px] portrait:w--full">
-    <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
+    <span class="label label--gray">Now · {{ stats.now_time }}</span>
     <span class="value value--xlarge value--tnums" data-fit-value="true">{{ stats.now_display }}</span>
-    <span class="label label--gray-out">{{ unit_label }}</span>
+    <span class="label label--gray">{{ unit_label }}</span>
     <span class="label">{{ stats.min_display }} – {{ stats.max_display }}</span>
   </div>
 
@@ -126,7 +126,7 @@
                         whenReady(buildChart);
                       })();
                         </script>
-    <span class="label label--gray-out w--full">
+    <span class="label label--gray w--full">
       Low {{ stats.min_time }} · Peak {{ stats.max_time }} · Avg {{ stats.avg_display }}
     </span>
   </div>

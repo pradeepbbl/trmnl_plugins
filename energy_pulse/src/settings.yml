@@ -72,7 +72,7 @@ custom_fields:
 - keyname: usage_examples
   field_type: text
   name: Usage examples
-  description: One "Label = kWh" per line. Each is costed at the current price and at the cheapest hour still to come. Type "off" to hide the row.
+  description: One "Label = kWh" per line. Each is costed at the current price and at the cheapest hour still to come. Type "off" or "no" to hide the row.
   help_text: Leave blank for the four defaults shown above.
   placeholder: |-
     Dish washer, 10 min = 6

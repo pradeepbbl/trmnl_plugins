@@ -5,11 +5,11 @@
 
   <div class="flex flex--row flex--between flex--bottom">
     <div class="flex flex--col flex--left">
-      <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
+      <span class="label label--gray">Now · {{ stats.now_time }}</span>
       <span class="value value--xxlarge value--tnums">{{ stats.now_display }}</span>
     </div>
     <div class="flex flex--col flex--right">
-      <span class="label label--gray-out">{{ unit_label }}</span>
+      <span class="label label--gray">{{ unit_label }}</span>
       <span class="label">Avg {{ stats.avg_display }}</span>
     </div>
   </div>
@@ -126,7 +126,7 @@
   {%- comment -%} Cheapest hours still ahead, for scheduling shiftable loads. {%- endcomment -%}
   {% assign upcoming = hours | where: "is_past", false | sort: "price" %}
   <div class="flex flex--col gap--xsmall">
-    <span class="label label--gray-out">Cheapest hours remaining</span>
+    <span class="label label--gray">Cheapest hours remaining</span>
     {% for h in upcoming limit: 3 %}
     <div class="flex flex--row flex--between w--full">
       <span class="label">{{ h.time }}</span>
