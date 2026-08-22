@@ -95,4 +95,4 @@
 </div>
 {% endif %}
 
-{% render 'title_bar', ok: ok, instance: zone_label %}
+{% render 'title_bar', ok: ok, instance: zone_label | default: "Data unavailable" %}

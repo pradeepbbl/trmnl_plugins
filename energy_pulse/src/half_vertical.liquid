@@ -140,5 +140,9 @@
 </div>
 {% endif %}
 
-{% capture bar_instance %}{{ zone_label }} · {{ date_label }}{% endcapture %}
+{% if zone_label != blank and date_label != blank %}
+  {% capture bar_instance %}{{ zone_label }} · {{ date_label }}{% endcapture %}
+{% else %}
+  {% assign bar_instance = "Data unavailable" %}
+{% endif %}
 {% render 'title_bar', ok: ok, instance: bar_instance %}

@@ -168,7 +168,7 @@
       </div>
       <span class="label label--base label--gray">Now · Best at {{ best_time }}</span>
     </div>
-    <div class="grid">
+    <div class="grid grid--cols-12">
       {% for u in usages %}
         <div class="item col--span-3">
           <div class="meta"></div>
@@ -204,5 +204,9 @@
 </div>
 {% endif %}
 
-{% capture bar_instance %}{{ zone_label }} · {{ date_label }} · {{ updated_at }}{% endcapture %}
+{% if zone_label != blank and date_label != blank %}
+  {% capture bar_instance %}{{ zone_label }} · {{ date_label }} · {{ updated_at }}{% endcapture %}
+{% else %}
+  {% assign bar_instance = "Data unavailable" %}
+{% endif %}
 {% render 'title_bar', ok: ok, instance: bar_instance %}
