@@ -1,0 +1,210 @@
+{% if ok == false or hours.size == 0 %}
+  {{ no_data }}
+{% else %}
+
+<div class="layout layout--col layout--stretch-x gap--space-between">
+
+  <div class="grid grid--cols-4">
+    <div class="flex flex--col flex--left gap--xsmall">
+      <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
+      <span class="value value--large value--tnums">{{ stats.now_display }}</span>
+    </div>
+    <div class="flex flex--col flex--left gap--xsmall">
+      <span class="label label--gray-out">Cheapest · {{ stats.min_time }}</span>
+      <span class="value value--small value--tnums">{{ stats.min_display }}</span>
+    </div>
+    <div class="flex flex--col flex--left gap--xsmall">
+      <span class="label label--gray-out">Peak · {{ stats.max_time }}</span>
+      <span class="value value--small value--tnums">{{ stats.max_display }}</span>
+    </div>
+    <div class="flex flex--col flex--left gap--xsmall">
+      <span class="label label--gray-out">Average</span>
+      <span class="value value--small value--tnums">{{ stats.avg_display }}</span>
+    </div>
+  </div>
+  <div id="price-chart" class="w--full"></div>
+  <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+  <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+  <script>
+    (function() {
+      var chartData = [
+        {% for h in hours %}{
+          y: {{ h.price }},
+          {% if h.is_now or h.is_min or h.is_max %}labelText: '{{ h.display }}',{% endif %}
+          category: '{% if h.is_now %}now{% elsif h.is_min or h.is_max %}extreme{% elsif h.is_past %}past{% else %}future{% endif %}'
+        }{% unless forloop.last %},{% endunless %}{% endfor %}
+      ];
+      var categories = [{% for h in hours %}'{{ h.label }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
+
+      function buildChart(useTRMNL) {
+        var el = 'price-chart';
+        var nowColor, extremeColor, futureColor, pastColor;
+
+        if (useTRMNL) {
+          nowColor = TRMNLCharts.series(0, 4, { el: el });
+          extremeColor = TRMNLCharts.series(1, 4, { el: el });
+          futureColor = TRMNLCharts.series(2, 4, { el: el });
+          pastColor = TRMNLCharts.series(3, 4, { el: el });
+        } else {
+          nowColor = '#000000';
+          extremeColor = '#333333';
+          futureColor = '#888888';
+          pastColor = '#CCCCCC';
+        }
+
+        var coloredData = chartData.map(function(d) {
+          var color;
+          if (d.category === 'now') color = nowColor;
+          else if (d.category === 'extreme') color = extremeColor;
+          else if (d.category === 'past') color = pastColor;
+          else color = futureColor;
+          return { y: d.y, labelText: d.labelText, color: color };
+        });
+
+        var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
+        var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
+        var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
+        var textStyle = (useTRMNL && TRMNLCharts.textStyle) ? TRMNLCharts.textStyle('label', { el: el }) : {};
+
+        return Highcharts.chart(el, mergeFn(baseOpts, {
+          chart: { type: 'column', height: px(300), backgroundColor: 'transparent', spacing: [5, 0, 0, 0] },
+          title: { text: null },
+          legend: { enabled: false },
+          accessibility: {
+              enabled: false
+          },
+          credits: { enabled: false },
+          xAxis: {
+            categories: categories,
+            lineWidth: 0,
+            tickLength: 0,
+            labels: { y: px(25) }
+          },
+          yAxis: {
+            title: { text: null },
+            gridLineDashStyle: 'shortdot',
+            tickAmount: 5,
+            plotLines: [{
+              value: {{ stats.avg }},
+              dashStyle: 'Dash',
+              width: px(1),
+              zIndex: 3,
+              label: {
+                text: '{{ stats.avg_display }}',
+                style: Object.assign({ fontWeight: 'bold', textOutline: 'none' }, textStyle),
+                align: 'right',
+                y: px(-10),
+                x: px(-1)
+              }
+            }]
+          },
+          tooltip: { enabled: false },
+          plotOptions: {
+            column: {
+              borderWidth: 0,
+              pointPadding: 0.05,
+              groupPadding: 0.05,
+              dataLabels: {
+                enabled: true,
+                crop: false,
+                overflow: 'allow',
+                inside: false,
+                verticalAlign: 'top',
+                y: px(-25),
+                x: px(-1),
+                formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
+                style: Object.assign({ fontWeight: 'bold', textOutline: 'none' }, textStyle)
+              }
+            }
+          },
+          series: [{ data: coloredData }]
+        }));
+      }
+
+      function whenReady(cb) {
+        var tries = 0;
+        (function attempt() {
+          if (window.Highcharts) {
+            if (window.TRMNLCharts) {
+              TRMNLCharts.watch('price-chart', function() { return cb(true); });
+            } else if (tries > 40) {
+              cb(false);
+            } else {
+              if (++tries > 200) return;
+              setTimeout(attempt, 50);
+            }
+            return;
+          }
+          if (++tries > 200) return;
+          setTimeout(attempt, 50);
+        })();
+      }
+
+      whenReady(buildChart);
+    })();
+  </script>
+
+  <div class="flex flex--row flex--between">
+    <span class="label label--base label--gray-out">
+      {{ unit_label }} ({{ unit_note }}){% if vat_percent > 0 %} incl. {{ vat_percent }}% VAT{% endif %} ·
+      dashed = today's average
+    </span>
+    <span class="label label--base label--gray-out">
+      {% if tomorrow.available %}
+        Tomorrow {{ tomorrow.min_display }} – {{ tomorrow.max_display }} (avg {{ tomorrow.avg_display }})
+      {% else %}
+        Tomorrow not published yet
+      {% endif %}
+    </span>
+  </div>
+
+  {% if show_usages and usages.size > 0 %}
+    <div class="flex flex--row flex--between">
+      <div class="flex flex--row gap--xsmall" style="align-items: center;">
+        {{ icon_bolt | replace: 'width="48" height="48"', 'width="20" height="20"' }}
+        <span class="label label--large">Cost to run</span>
+      </div>
+      <span class="label label--base label--gray-out">Now · Best at {{ best_time }}</span>
+    </div>
+    <div class="grid">
+      {% for u in usages %}
+        <div class="item col--span-3">
+          <div class="meta"></div>
+          <div class="icon" style="display: flex; align-items: center; justify-content: center;">
+            {% case u.icon %}
+              {% when "shower" %}{{ icon_shower }}
+              {% when "bath" %}{{ icon_bath }}
+              {% when "dishwasher" %}{{ icon_dishwasher }}
+              {% when "washer" %}{{ icon_washer }}
+              {% when "dryer" %}{{ icon_dryer }}
+              {% when "oven" %}{{ icon_oven }}
+              {% when "kettle" %}{{ icon_kettle }}
+              {% when "car" %}{{ icon_car }}
+              {% when "tv" %}{{ icon_tv }}
+              {% when "fridge" %}{{ icon_fridge }}
+              {% when "phone" %}{{ icon_phone }}
+              {% else %}{{ icon_bolt }}
+            {% endcase %}
+          </div>
+          <div class="content">
+            <span class="label label--base">{{ u.label }}</span>
+            <span class="label label--base label--gray-out">{{ u.kwh }} kWh</span>
+            <span class="value value--base value--tnums">{{ currency_symbol }}{{ u.now }}</span>
+            <span class="label label--base label--gray-out value--tnums">
+              Best {{ currency_symbol }}{{ u.best }}
+            </span>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<div class="title_bar">
+  <span class="title">Day-Ahead Prices</span>
+  {% if ok %}
+    <span class="instance">{{ zone_label }} · {{ date_label }} · {{ updated_at }}</span>
+  {% endif %}
+</div>

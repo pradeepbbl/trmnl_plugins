@@ -1,0 +1,140 @@
+{% if ok == false or hours.size == 0 %}
+{{ no_data }}
+{% else %}
+<div class="layout layout--row gap--medium">
+
+  <div class="flex flex--col flex--left gap--xsmall" style="width: 180px; flex: none;">
+    <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
+    <span class="value value--xlarge value--tnums" data-fit-value="true">{{ stats.now_display }}</span>
+    <span class="label label--gray-out">{{ unit_label }}</span>
+    <span class="label">{{ stats.min_display }} – {{ stats.max_display }}</span>
+  </div>
+
+  <div class="flex flex--col" style="flex: 1 1 0; min-width: 0;">
+    <div id="price-chart-hh" class="w--full"></div>
+    <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
+    <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
+    <script>
+      (function() {
+        var chartData = [
+          {% for h in hours %}{
+            y: {{ h.price }},
+       {% if h.is_now or h.is_min or h.is_max %}labelText: '{{ h.display }}',{% endif %}
+        category: '{% if h.is_now %}now{% elsif h.is_min or h.is_max %}extreme{% elsif h.is_past %}past{% else %}future{% endif %}'
+      }{% unless forloop.last %},{% endunless %}{% endfor %}
+      ];
+      var categories = [{% for h in hours %}'{{ h.label }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
+
+      function buildChart(useTRMNL) {
+        var el = 'price-chart-hh';
+        var nowColor, extremeColor, futureColor, pastColor;
+
+        if (useTRMNL) {
+          nowColor = TRMNLCharts.series(0, 4, { el: el });
+          extremeColor = TRMNLCharts.series(1, 4, { el: el });
+          futureColor = TRMNLCharts.series(2, 4, { el: el });
+          pastColor = TRMNLCharts.series(3, 4, { el: el });
+        } else {
+          nowColor = '#000000';
+          extremeColor = '#333333';
+          futureColor = '#888888';
+          pastColor = '#CCCCCC';
+        }
+
+        var coloredData = chartData.map(function(d) {
+          var color;
+          if (d.category === 'now') color = nowColor;
+          else if (d.category === 'extreme') color = extremeColor;
+          else if (d.category === 'past') color = pastColor;
+          else color = futureColor;
+          return { y: d.y, labelText: d.labelText, color: color };
+        });
+
+        var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
+        var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
+        var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
+
+        return Highcharts.chart(el, mergeFn(baseOpts, {
+          chart: { type: 'column', height: px(180), backgroundColor: 'transparent', spacing: [5, 0, 0, 0] },
+          title: { text: null },
+          legend: { enabled: false },
+          accessibility: { enabled: false },
+          credits: { enabled: false },
+          xAxis: {
+            categories: categories,
+            lineWidth: 0,
+            tickLength: 0,
+            labels: { step: 3, y: px(20) }
+          },
+          yAxis: {
+            title: { text: null },
+            labels: { enabled: false },
+            gridLineWidth: 0,
+            plotLines: [{
+              value: {{ stats.avg }},
+                      dashStyle: 'Dash',
+                      width: px(1),
+                      zIndex: 3,
+                      label: {
+                        text: '{{ stats.avg_display }}',
+                        align: 'right',
+                        style: { fontWeight: 'bold', textOutline: 'none' },
+                        y: px(-10),
+                        x: px(-1)
+                        }
+                        }]
+                      },
+                      tooltip: { enabled: false },
+                      plotOptions: {
+                        column: {
+                          borderWidth: 0,
+                          pointPadding: 0.05,
+                          groupPadding: 0.05,
+                          dataLabels: {
+                            enabled: true, crop: false, overflow: 'allow', inside: false,
+                            verticalAlign: 'top', y: px(-25),
+                            formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
+                            style: { fontWeight: 'bold', textOutline: 'none' }
+                                    }
+                                   }
+                          },
+                          series: [{ data: coloredData }]
+                          }));
+                          }
+
+                          function whenReady(cb) {
+                          var tries = 0;
+                          (function attempt() {
+                            if (window.Highcharts) {
+                              if (window.TRMNLCharts) {
+                                TRMNLCharts.watch('price-chart-hh', function() { return cb(true); });
+                              } else if (tries > 40) {
+                                cb(false);
+                              } else {
+                                if (++tries > 200) return;
+                                setTimeout(attempt, 50);
+                              }
+                              return;
+                            }
+                            if (++tries > 200) return;
+                            setTimeout(attempt, 50);
+                          })();
+                        }
+
+                        whenReady(buildChart);
+                      })();
+                        </script>
+    <span class="label label--gray-out w--full">
+      Low {{ stats.min_time }} · Peak {{ stats.max_time }} · Avg {{ stats.avg_display }}
+    </span>
+  </div>
+
+</div>
+{% endif %}
+
+<div class="title_bar">
+  <span class="title">Day-Ahead Prices</span>
+  {% if ok %}
+  <span class="instance">{{ zone_label }} · {{ date_label }}</span>
+  {% endif %}
+</div>

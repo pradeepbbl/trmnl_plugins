@@ -1,0 +1,120 @@
+{%- comment -%}
+Shared across every view. `transform.py` guarantees the shape used below:
+ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
+{%- endcomment -%}
+
+{%- assign price_unit = trmnl.plugin_settings.custom_fields_values.price_unit -%}
+{%- if price_unit == "currency_mwh" -%}
+  {%- assign unit_note = "wholesale, per MWh" -%}
+{%- else -%}
+  {%- assign unit_note = "wholesale, excl. grid fees" -%}
+{%- endif -%}
+
+{%- comment -%} "off" in the usage_examples field hides the cost row entirely. {%- endcomment -%}
+{%- assign usage_setting = trmnl.plugin_settings.custom_fields_values.usage_examples | strip | downcase -%}
+{%- assign show_usages = true -%}
+{%- if usage_setting == "off" or usage_setting == "no" -%}
+  {%- assign show_usages = false -%}
+{%- endif -%}
+
+{%- capture no_data -%}
+<div class="layout layout--col layout--center gap--small">
+  <span class="title title--small">{{ error | default: "No price data" }}</span>
+  {% if error_detail %}
+    <span class="label label--small label--gray-out text--center">{{ error_detail }}</span>
+  {% else %}
+    <span class="label label--small label--gray-out text--center">
+      Check the ENTSO-E security token and bidding zone in plugin settings.
+    </span>
+  {% endif %}
+</div>
+{%- endcapture -%}
+
+{%- comment -%}
+  Inline monochrome SVGs for the usage-cost icons (full view only). The device
+  is 1-bit e-ink — photos and emoji (the framework font ships no emoji glyphs
+  yet) don't render reliably at this size, so these are hand-drawn line icons
+  baked into the markup: no network fetch, no lint failures, crisp at 22px.
+{%- endcomment -%}
+{%- capture icon_shower -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+  <path d="M4 8h12a4 4 0 0 1 4 4H4V8z"/>
+  <rect x="16" y="3" width="2.5" height="5" rx="1"/>
+  <circle cx="7" cy="15" r="1.2"/><circle cx="11" cy="15" r="1.2"/><circle cx="15" cy="15" r="1.2"/>
+  <circle cx="7" cy="19" r="1.2"/><circle cx="11" cy="19" r="1.2"/><circle cx="15" cy="19" r="1.2"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_bath -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+  <path d="M2 11h20v2a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-2z"/>
+  <rect x="4" y="6" width="2.5" height="5" rx="1"/>
+  <rect x="5" y="19" width="2" height="3" rx="1"/><rect x="17" y="19" width="2" height="3" rx="1"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_washer -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <circle cx="12" cy="14" r="5" stroke="currentColor" stroke-width="2.5"/>
+  <circle cx="7" cy="6" r="1.5" fill="currentColor"/><circle cx="10.5" cy="6" r="1.5" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_dryer -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <circle cx="12" cy="14" r="5" stroke="currentColor" stroke-width="2.5"/>
+  <circle cx="7" cy="6" r="1.5" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_oven -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <rect x="5" y="10" width="14" height="10" rx="1" stroke="currentColor" stroke-width="2"/>
+  <circle cx="7" cy="6" r="1.5" fill="currentColor"/><circle cx="12" cy="6" r="1.5" fill="currentColor"/><circle cx="17" cy="6" r="1.5" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_kettle -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+  <path d="M5 9h11v8a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V9z"/>
+  <path d="M16 11h2a3 3 0 0 1 0 6h-2v-6z"/>
+  <rect x="7" y="3" width="2" height="4" rx="1"/><rect x="11" y="3" width="2" height="4" rx="1"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_car -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M5 11l2-5h10l2 5"/>
+  <rect x="3" y="11" width="18" height="7" rx="2"/>
+  <circle cx="7" cy="18" r="2" fill="currentColor" stroke="none"/><circle cx="17" cy="18" r="2" fill="currentColor" stroke="none"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_tv -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <rect x="11" y="17" width="2" height="3" fill="currentColor"/><rect x="7" y="20" width="10" height="2" rx="1" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_fridge -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="5" y="1" width="14" height="22" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <line x1="5" y1="10" x2="19" y2="10" stroke="currentColor" stroke-width="2.5"/>
+  <rect x="8" y="4" width="2" height="4" rx="1" fill="currentColor"/><rect x="8" y="12" width="2" height="4" rx="1" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_phone -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="6" y="1" width="12" height="22" rx="3" stroke="currentColor" stroke-width="2.5"/>
+  <rect x="10" y="19" width="4" height="2" rx="1" fill="currentColor"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_dishwasher -%}
+<svg viewBox="0 0 24 24" width="48" height="48" fill="none">
+  <rect x="2" y="2" width="20" height="20" rx="2" stroke="currentColor" stroke-width="2.5"/>
+  <line x1="2" y1="7" x2="22" y2="7" stroke="currentColor" stroke-width="2"/>
+  <circle cx="7" cy="4.5" r="1.2" fill="currentColor"/><circle cx="10.5" cy="4.5" r="1.2" fill="currentColor"/>
+  <line x1="8" y1="10" x2="8" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="12" y1="10" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="10" x2="16" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+{%- endcapture -%}
+{%- capture icon_bolt -%}
+<svg viewBox="0 0 24 24" width="48" height="48"><path d="M13 2 L4 14 H11 L10 22 L20 10 H13 Z" fill="currentColor"/></svg>
+{%- endcapture -%}
