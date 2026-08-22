@@ -5,6 +5,8 @@ prices** for a European bidding zone, ultimately sourced from the
 [ENTSO-E Transparency Platform](https://transparency.entsoe.eu) via
 a small API service this plugin polls directly.
 
+![marketplace preview](docs/featured.png)
+
 ![full view](docs/full.png)
 
 All four layouts are implemented — `full`, `half_horizontal`, `half_vertical`

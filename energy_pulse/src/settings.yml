@@ -89,6 +89,16 @@ custom_fields:
   optional: true
   min: 0
   max: 100
+- keyname: author_bio
+  field_type: author_bio
+  name: About this plugin
+  category: environment,finance
+  description: Energy Pulse was built by Pradeep Mishra to surface European day-ahead
+    electricity prices from ENTSO-E at a glance. Questions, bugs, or feature
+    requests? Open an issue on GitHub or reach out by email.<br/>Source and
+    docs live in the repo linked below.
+  github_url: https://github.com/pradeepbbl/trmnl_plugins
+  email_address: pradeepbbl@gmail.com
 name: Energy Pulse
 description: Day-ahead energy prices at a glance
 refresh_interval: 1440
