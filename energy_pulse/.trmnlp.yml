@@ -1,0 +1,24 @@
+# TRMNLP configuration
+# {{ env.VARIABLE }} interpolation is available here
+---
+watch:
+  - .trmnlp.yml
+  - src
+
+# Export ENTSOE_TOKEN before running ./bin/trmnlp serve to poll the live API.
+custom_fields:
+  bidding_zone: "10YNL----------L"
+  price_unit: "currency_kwh"
+  vat_percent: "0"
+
+
+# The transform needs a real zone to slice out "today" correctly.
+time_zone: Europe/Amsterdam
+
+transform_runtime: enabled
+
+variables:
+  trmnl:
+    plugin_settings:
+      instance_name: Day-Ahead Prices
+      polling_url: http://host.docker.internal:5005/api/v1/energy-prices?bidding_zone={{ bidding_zone }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz=Europe%2FAmsterdam&utc_offset=7200

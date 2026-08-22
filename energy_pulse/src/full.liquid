@@ -22,7 +22,8 @@
       <span class="value value--small value--tnums">{{ stats.avg_display }}</span>
     </div>
   </div>
-  <div id="price-chart" class="w--full"></div>
+  {% assign chart_id = "price-chart" | append_random %}
+  <div id="{{ chart_id }}" class="w--full"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
   <script>
@@ -37,7 +38,7 @@
       var categories = [{% for h in hours %}'{{ h.label }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
 
       function buildChart(useTRMNL) {
-        var el = 'price-chart';
+        var el = '{{ chart_id }}';
         var nowColor, extremeColor, futureColor, pastColor;
 
         if (useTRMNL) {
@@ -67,7 +68,7 @@
         var textStyle = (useTRMNL && TRMNLCharts.textStyle) ? TRMNLCharts.textStyle('label', { el: el }) : {};
 
         return Highcharts.chart(el, mergeFn(baseOpts, {
-          chart: { type: 'column', height: px(300), backgroundColor: 'transparent', spacing: [5, 0, 0, 0] },
+          chart: { type: 'column', height: px(300), backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
           title: { text: null },
           legend: { enabled: false },
           accessibility: {
@@ -100,6 +101,7 @@
           },
           tooltip: { enabled: false },
           plotOptions: {
+            series: { animation: false },
             column: {
               borderWidth: 0,
               pointPadding: 0.05,
@@ -126,7 +128,7 @@
         (function attempt() {
           if (window.Highcharts) {
             if (window.TRMNLCharts) {
-              TRMNLCharts.watch('price-chart', function() { return cb(true); });
+              TRMNLCharts.watch('{{ chart_id }}', function() { return cb(true); });
             } else if (tries > 40) {
               cb(false);
             } else {

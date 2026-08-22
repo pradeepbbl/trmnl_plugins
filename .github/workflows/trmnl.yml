@@ -1,0 +1,55 @@
+name: TRMNL
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      plugins: ${{ steps.find.outputs.plugins }}
+    steps:
+      - uses: actions/checkout@v6
+      - id: find
+        run: |
+          plugins=$(find . -mindepth 2 -maxdepth 2 -name '.trmnlp.yml' -printf '%h\n' \
+            | sed 's|^\./||' | sort | jq -R -s -c 'split("\n")[:-1]')
+          echo "plugins=$plugins" >> "$GITHUB_OUTPUT"
+
+  lint:
+    needs: discover
+    if: needs.discover.outputs.plugins != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+      - run: gem install trmnl_preview
+      - name: trmnlp lint (${{ matrix.plugin }})
+        working-directory: ${{ matrix.plugin }}
+        run: trmnlp lint
+
+  push:
+    needs: [discover, lint]
+    if: github.ref == 'refs/heads/master' && needs.discover.outputs.plugins != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+      - run: gem install trmnl_preview
+      - name: trmnlp push (${{ matrix.plugin }})
+        working-directory: ${{ matrix.plugin }}
+        run: trmnlp push --force
+        env:
+          TRMNL_API_KEY: ${{ secrets.TRMNL_API_KEY }}

@@ -11,7 +11,8 @@
     <span class="label label--gray-out">{{ unit_label }}</span>
   </div>
 
-  <div id="price-chart-q" class="w--full" style="min-height: 100px;"></div>
+  {% assign chart_id = "price-chart-q" | append_random %}
+  <div id="{{ chart_id }}" class="w--full" style="min-height: 100px;"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script>
     (function() {
@@ -23,7 +24,7 @@
     ];
 
     function buildChart(useTRMNL) {
-      var el = 'price-chart-q';
+      var el = '{{ chart_id }}';
       var nowColor, futureColor, pastColor;
 
       if (useTRMNL) {
@@ -47,7 +48,7 @@
       var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
 
       var chartOpts = {
-        chart: { type: 'column', height: 100, backgroundColor: 'transparent', spacing: [2, 0, 0, 0] },
+        chart: { type: 'column', height: 100, backgroundColor: 'transparent', spacing: [2, 0, 0, 0], animation: false },
         title: { text: null },
         accessibility: { enabled: false },
         legend: { enabled: false },
@@ -55,7 +56,7 @@
         xAxis: { categories: false, labels: { enabled: false }, lineWidth: 0, tickLength: 0 },
         yAxis: { title: { text: null }, labels: { enabled: false }, gridLineWidth: 0 },
         tooltip: { enabled: false },
-        plotOptions: { column: { borderWidth: 0, pointPadding: 0.02, groupPadding: 0.02 } },
+        plotOptions: { series: { animation: false }, column: { borderWidth: 0, pointPadding: 0.02, groupPadding: 0.02 } },
         series: [{ data: coloredData }]
       };
 
@@ -71,7 +72,7 @@
       (function attempt() {
         if (window.Highcharts) {
           if (window.TRMNLCharts) {
-            TRMNLCharts.watch('price-chart-q', function() { return cb(true); });
+            TRMNLCharts.watch('{{ chart_id }}', function() { return cb(true); });
           } else if (tries > 40) {
             cb(false);
           } else {

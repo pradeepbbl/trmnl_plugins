@@ -1,0 +1,94 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+polling_verb: get
+framework_version: 3.2.0
+serverless_language: python
+polling_url: https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ bidding_zone }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}
+polling_headers: ''
+polling_body: ''
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+oauth_authorize_url: ''
+oauth_token_url: ''
+oauth_scopes: ''
+oauth_scope_separator: ''
+oauth_refresh_url: ''
+oauth_auth_params: ''
+oauth_token_headers: ''
+oauth_token_site: ''
+oauth_token_params: ''
+oauth_token_request_auth_method: ''
+oauth_body_format: ''
+oauth_token_response_metadata: ''
+oauth_authorization_method: ''
+oauth_refresh_params: ''
+oauth_token_field_name: ''
+oauth_expiry_field_name: ''
+oauth_expiry_strategy: ''
+oauth_fixed_expiry_ms: ''
+custom_fields:
+- keyname: bidding_zone
+  field_type: select
+  name: Bidding zone
+  description: The market area to show prices for.
+  default: 10YNL----------L
+  options:
+  - Austria: 10YAT-APG------L
+  - Belgium: 10YBE----------2
+  - Czechia: 10YCZ-CEPS-----N
+  - Denmark DK1: 10YDK-1--------W
+  - Denmark DK2: 10YDK-2--------M
+  - Finland: 10YFI-1--------U
+  - France: 10YFR-RTE------C
+  - Germany-Luxembourg: 10Y1001A1001A82H
+  - Great Britain: 10YGB----------A
+  - Hungary: 10YHU-MAVIR----U
+  - Ireland (SEM): 10Y1001A1001A59C
+  - Italy: 10YIT-GRTN-----B
+  - Netherlands: 10YNL----------L
+  - Norway NO1: 10YNO-1--------2
+  - Norway NO2: 10YNO-2--------T
+  - Norway NO3: 10YNO-3--------J
+  - Norway NO4: 10YNO-4--------9
+  - Norway NO5: 10Y1001A1001A48H
+  - Poland: 10YPL-AREA-----S
+  - Portugal: 10YPT-REN------W
+  - Spain: 10YES-REE------0
+  - Sweden SE1: 10Y1001A1001A44P
+  - Sweden SE2: 10Y1001A1001A45N
+  - Sweden SE3: 10Y1001A1001A46L
+  - Sweden SE4: 10Y1001A1001A47J
+  - Switzerland: 10YCH-SWISSGRIDZ
+- keyname: price_unit
+  field_type: select
+  name: Price unit
+  description: Select the display unit for prices. Converts automatically between wholesale MWh and retail kWh or cents.
+  default: currency_kwh
+  options:
+  - Currency per kWh (€0.0885/kWh): currency_kwh
+  - Cents per kWh (8.85 ct/kWh): subunit_kwh
+  - Currency per MWh (88.5 EUR/MWh): currency_mwh
+- keyname: usage_examples
+  field_type: text
+  name: Usage examples
+  description: One "Label = kWh" per line. Each is costed at the current price and at the cheapest hour still to come. Type "off" to hide the row.
+  help_text: Leave blank for the four defaults shown above.
+  placeholder: |-
+    Dish washer, 10 min = 6
+    Washing machine = 0.8
+    Watch Tv = 1.1
+    Charge an EV = 45
+  optional: true
+- keyname: vat_percent
+  field_type: number
+  name: VAT %
+  description: Optional. Added on top of the wholesale price.
+  help_text: Leave blank for raw wholesale prices.
+  optional: true
+  min: 0
+  max: 100
+name: Energy Pulse
+description: Day-ahead energy prices at a glance
+refresh_interval: 1440
