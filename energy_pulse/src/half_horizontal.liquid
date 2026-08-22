@@ -11,7 +11,7 @@
   </div>
 
   <div class="flex flex--col grow basis--0 w--min-0 portrait:w--full">
-    {% assign chart_id = "price-chart-hh" %}
+    {% assign chart_id = "price-chart-hh" | append_random %}
     <div id="{{ chart_id }}" class="w--full grow"></div>
     <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
     <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>

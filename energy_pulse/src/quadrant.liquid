@@ -11,7 +11,7 @@
     <span class="label label--gray">{{ unit_label }}</span>
   </div>
 
-  {% assign chart_id = "price-chart-q" %}
+  {% assign chart_id = "price-chart-q" | append_random %}
   <div id="{{ chart_id }}" class="w--full grow h--min-[100px]"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script>
