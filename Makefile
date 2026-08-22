@@ -18,9 +18,7 @@ endif
 endif
 
 DOCKER_RUN := docker run --rm --pull always \
-	--volume "$(CURDIR)/$(PLUGIN):/plugin" \
-	--env ENTSOE_TOKEN \
-	--env TRMNL_API_KEY
+	--volume "$(CURDIR)/$(PLUGIN):/plugin"
 
 .PHONY: help serve build lint pull test
 
