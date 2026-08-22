@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  {% assign chart_id = "price-chart-hv" | append_random %}
+  {% assign chart_id = "price-chart-hv" %}
   <div id="{{ chart_id }}" class="w--full grow"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
@@ -140,5 +140,9 @@
 </div>
 {% endif %}
 
-{% capture bar_instance %}{{ zone_label }} · {{ date_label }}{% endcapture %}
+{% if zone_label != blank and date_label != blank %}
+  {% capture bar_instance %}{{ zone_label }} · {{ date_label }}{% endcapture %}
+{% else %}
+  {% assign bar_instance = "Data unavailable" %}
+{% endif %}
 {% render 'title_bar', ok: ok, instance: bar_instance %}
