@@ -5,7 +5,6 @@ watch:
   - .trmnlp.yml
   - src
 
-# Export ENTSOE_TOKEN before running ./bin/trmnlp serve to poll the live API.
 custom_fields:
   bidding_zone: "10YNL----------L"
   price_unit: "currency_kwh"

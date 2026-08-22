@@ -17,6 +17,19 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
   {%- assign show_usages = false -%}
 {%- endif -%}
 
+{%- comment -%}
+  Shared title bar across every view. Pass `ok` and a pre-formatted `instance`
+  string (each view controls how much detail — zone/date/updated_at — fits).
+{%- endcomment -%}
+{% template title_bar %}
+<div class="title_bar">
+  <span class="title">Day-Ahead Prices</span>
+  {% if ok %}
+    <span class="instance">{{ instance }}</span>
+  {% endif %}
+</div>
+{% endtemplate %}
+
 {%- capture no_data -%}
 <div class="layout layout--col layout--center gap--small">
   <span class="title title--small">{{ error | default: "No price data" }}</span>

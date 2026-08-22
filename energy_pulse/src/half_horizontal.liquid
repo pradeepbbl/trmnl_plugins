@@ -1,18 +1,18 @@
 {% if ok == false or hours.size == 0 %}
 {{ no_data }}
 {% else %}
-<div class="layout layout--row gap--medium">
+<div class="layout layout--row portrait:layout--col gap--medium">
 
-  <div class="flex flex--col flex--left gap--xsmall" style="width: 180px; flex: none;">
+  <div class="flex flex--col flex--left gap--xsmall grow-0 shrink-0 w--[180px] portrait:w--full">
     <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
     <span class="value value--xlarge value--tnums" data-fit-value="true">{{ stats.now_display }}</span>
     <span class="label label--gray-out">{{ unit_label }}</span>
     <span class="label">{{ stats.min_display }} – {{ stats.max_display }}</span>
   </div>
 
-  <div class="flex flex--col" style="flex: 1 1 0; min-width: 0;">
+  <div class="flex flex--col grow basis--0 w--min-0 portrait:w--full">
     {% assign chart_id = "price-chart-hh" | append_random %}
-    <div id="{{ chart_id }}" class="w--full"></div>
+    <div id="{{ chart_id }}" class="w--full grow"></div>
     <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
     <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
     <script>
@@ -56,7 +56,7 @@
         var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
 
         return Highcharts.chart(el, mergeFn(baseOpts, {
-          chart: { type: 'column', height: px(180), backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
+          chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
           title: { text: null },
           legend: { enabled: false },
           accessibility: { enabled: false },
@@ -134,9 +134,5 @@
 </div>
 {% endif %}
 
-<div class="title_bar">
-  <span class="title">Day-Ahead Prices</span>
-  {% if ok %}
-  <span class="instance">{{ zone_label }} · {{ date_label }}</span>
-  {% endif %}
-</div>
+{% capture bar_instance %}{{ zone_label }} · {{ date_label }}{% endcapture %}
+{% render 'title_bar', ok: ok, instance: bar_instance %}

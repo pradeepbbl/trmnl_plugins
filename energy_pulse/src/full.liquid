@@ -4,7 +4,7 @@
 
 <div class="layout layout--col layout--stretch-x gap--space-between">
 
-  <div class="grid grid--cols-4">
+  <div class="grid grid--cols-4 portrait:grid--cols-2">
     <div class="flex flex--col flex--left gap--xsmall">
       <span class="label label--gray-out">Now · {{ stats.now_time }}</span>
       <span class="value value--large value--tnums">{{ stats.now_display }}</span>
@@ -23,7 +23,7 @@
     </div>
   </div>
   {% assign chart_id = "price-chart" | append_random %}
-  <div id="{{ chart_id }}" class="w--full"></div>
+  <div id="{{ chart_id }}" class="w--full grow"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
   <script>
@@ -68,7 +68,7 @@
         var textStyle = (useTRMNL && TRMNLCharts.textStyle) ? TRMNLCharts.textStyle('label', { el: el }) : {};
 
         return Highcharts.chart(el, mergeFn(baseOpts, {
-          chart: { type: 'column', height: px(300), backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
+          chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
           title: { text: null },
           legend: { enabled: false },
           accessibility: {
@@ -162,7 +162,7 @@
 
   {% if show_usages and usages.size > 0 %}
     <div class="flex flex--row flex--between">
-      <div class="flex flex--row gap--xsmall" style="align-items: center;">
+      <div class="flex flex--row flex--center-y gap--xsmall">
         {{ icon_bolt | replace: 'width="48" height="48"', 'width="20" height="20"' }}
         <span class="label label--large">Cost to run</span>
       </div>
@@ -172,7 +172,7 @@
       {% for u in usages %}
         <div class="item col--span-3">
           <div class="meta"></div>
-          <div class="icon" style="display: flex; align-items: center; justify-content: center;">
+          <div class="icon flex flex--center-x flex--center-y">
             {% case u.icon %}
               {% when "shower" %}{{ icon_shower }}
               {% when "bath" %}{{ icon_bath }}
@@ -204,9 +204,5 @@
 </div>
 {% endif %}
 
-<div class="title_bar">
-  <span class="title">Day-Ahead Prices</span>
-  {% if ok %}
-    <span class="instance">{{ zone_label }} · {{ date_label }} · {{ updated_at }}</span>
-  {% endif %}
-</div>
+{% capture bar_instance %}{{ zone_label }} · {{ date_label }} · {{ updated_at }}{% endcapture %}
+{% render 'title_bar', ok: ok, instance: bar_instance %}

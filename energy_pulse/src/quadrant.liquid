@@ -12,7 +12,7 @@
   </div>
 
   {% assign chart_id = "price-chart-q" | append_random %}
-  <div id="{{ chart_id }}" class="w--full" style="min-height: 100px;"></div>
+  <div id="{{ chart_id }}" class="w--full grow h--min-[100px]"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script>
     (function() {
@@ -45,10 +45,8 @@
         return { y: d.y, color: color };
       });
 
-      var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
-
       var chartOpts = {
-        chart: { type: 'column', height: 100, backgroundColor: 'transparent', spacing: [2, 0, 0, 0], animation: false },
+        chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [2, 0, 0, 0], animation: false },
         title: { text: null },
         accessibility: { enabled: false },
         legend: { enabled: false },
@@ -61,7 +59,6 @@
       };
 
       if (useTRMNL) {
-        chartOpts.chart.height = px(100);
         return Highcharts.chart(el, TRMNLCharts.merge(TRMNLCharts.options({ el: el }), chartOpts));
       }
       return Highcharts.chart(el, chartOpts);
@@ -98,9 +95,4 @@
 </div>
 {% endif %}
 
-<div class="title_bar">
-  <span class="title">Day-Ahead Prices</span>
-  {% if ok %}
-  <span class="instance">{{ zone_label }}</span>
-  {% endif %}
-</div>
+{% render 'title_bar', ok: ok, instance: zone_label %}
