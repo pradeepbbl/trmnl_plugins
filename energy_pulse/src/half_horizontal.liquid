@@ -42,16 +42,22 @@
             pastColor = '#CCCCCC';
           }
 
+          var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
+
           var coloredData = chartData.map(function(d) {
             var color;
             if (d.category === 'now') color = nowColor;
             else if (d.category === 'extreme') color = extremeColor;
             else if (d.category === 'past') color = pastColor;
             else color = futureColor;
-            return { y: d.y, labelText: d.labelText, color: color };
+            var negative = d.y < 0;
+            return {
+              y: d.y,
+              labelText: d.labelText,
+              color: color,
+              dataLabels: negative ? { verticalAlign: 'bottom', y: px(25) } : { verticalAlign: 'top', y: px(-25) }
+            };
           });
-
-          var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
           var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
           var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
 
@@ -87,7 +93,6 @@
                 groupPadding: 0.05,
                 dataLabels: {
                   enabled: true, crop: false, overflow: 'allow', inside: false,
-                  verticalAlign: 'top', y: px(-25),
                   formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
                   style: { fontWeight: 'bold', textOutline: 'none' }
                 }
