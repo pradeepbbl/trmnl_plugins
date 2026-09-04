@@ -1,5 +1,5 @@
 {% if ok == false or hours.size == 0 %}
-{{ no_data }}
+  {{ no_data }}
 {% else %}
 <div class="layout layout--col layout--stretch-x gap--space-between">
 
@@ -15,7 +15,7 @@
   </div>
 
   {% assign chart_id = "price-chart-hv" | append_random %}
-  <div id="{{ chart_id }}" class="w--full grow"></div>
+  <div id="{{ chart_id }}" class="w--full grow portrait:flex--col"></div>
   <script src="https://trmnl.com/js/highcharts/12.3.0/highcharts.js"></script>
   <script src="https://trmnl.com/js/highcharts/12.3.0/pattern-fill.js"></script>
   <script>
@@ -23,117 +23,117 @@
       var chartData = [
         {% for h in hours %}{
           y: {{ h.price }},
-     {% if h.is_now or h.is_min or h.is_max %}labelText: '{{ h.display }}',{% endif %}
-      category: '{% if h.is_now %}now{% elsif h.is_min or h.is_max %}extreme{% elsif h.is_past %}past{% else %}future{% endif %}'
-    }{% unless forloop.last %},{% endunless %}{% endfor %}
-    ];
-    var categories = [{% for h in hours %}'{{ h.label }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
+          {% if h.is_now or h.is_min or h.is_max %}labelText: '{{ h.display }}',{% endif %}
+          category: '{% if h.is_now %}now{% elsif h.is_min or h.is_max %}extreme{% elsif h.is_past %}past{% else %}future{% endif %}'
+        }{% unless forloop.last %},{% endunless %}{% endfor %}
+      ];
+      var categories = [{% for h in hours %}'{{ h.label }}'{% unless forloop.last %},{% endunless %}{% endfor %}];
 
-    function buildChart(useTRMNL) {
-      var el = '{{ chart_id }}';
-      var nowColor, extremeColor, futureColor, pastColor;
+      function buildChart(useTRMNL) {
+        var el = '{{ chart_id }}';
+        var nowColor, extremeColor, futureColor, pastColor;
 
-      if (useTRMNL) {
-        nowColor = TRMNLCharts.series(0, 4, { el: el });
-        extremeColor = TRMNLCharts.series(1, 4, { el: el });
-        futureColor = TRMNLCharts.series(2, 4, { el: el });
-        pastColor = TRMNLCharts.series(3, 4, { el: el });
-      } else {
-        nowColor = '#000000';
-        extremeColor = '#333333';
-        futureColor = '#888888';
-        pastColor = '#CCCCCC';
+        if (useTRMNL) {
+          nowColor = TRMNLCharts.series(0, 4, { el: el });
+          extremeColor = TRMNLCharts.series(1, 4, { el: el });
+          futureColor = TRMNLCharts.series(2, 4, { el: el });
+          pastColor = TRMNLCharts.series(3, 4, { el: el });
+        } else {
+          nowColor = '#000000';
+          extremeColor = '#333333';
+          futureColor = '#888888';
+          pastColor = '#CCCCCC';
+        }
+
+        var coloredData = chartData.map(function(d) {
+          var color;
+          if (d.category === 'now') color = nowColor;
+          else if (d.category === 'extreme') color = extremeColor;
+          else if (d.category === 'past') color = pastColor;
+          else color = futureColor;
+          return { y: d.y, labelText: d.labelText, color: color };
+        });
+
+        var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
+        var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
+        var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
+
+        return Highcharts.chart(el, mergeFn(baseOpts, {
+          chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
+          title: { text: null },
+          legend: { enabled: false },
+          credits: { enabled: false },
+          accessibility: { enabled: false },
+          xAxis: {
+            categories: categories,
+            lineWidth: 0,
+            tickLength: 0,
+            labels: { step: 6, y: px(20) }
+          },
+          yAxis: {
+            title: { text: null },
+            labels: { enabled: false },
+            gridLineWidth: 0,
+            plotLines: [{
+              value: {{ stats.avg }},
+              dashStyle: 'Dash',
+              width: px(1),
+              zIndex: 3
+            }]
+          },
+          tooltip: { enabled: false },
+          plotOptions: {
+            series: { animation: false },
+            column: {
+              borderWidth: 0,
+              pointPadding: 0.05,
+              groupPadding: 0.05,
+              dataLabels: {
+                enabled: true, crop: false, overflow: 'allow', inside: false,
+                verticalAlign: 'top', y: px(-25),
+                formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
+                style: { fontWeight: 'bold', textOutline: 'none' }
+              }
+            }
+          },
+          series: [{ data: coloredData }]
+        }));
       }
 
-      var coloredData = chartData.map(function(d) {
-        var color;
-        if (d.category === 'now') color = nowColor;
-        else if (d.category === 'extreme') color = extremeColor;
-        else if (d.category === 'past') color = pastColor;
-        else color = futureColor;
-        return { y: d.y, labelText: d.labelText, color: color };
-      });
+      function whenReady(cb) {
+        var tries = 0;
+        (function attempt() {
+          if (window.Highcharts) {
+            if (window.TRMNLCharts) {
+              TRMNLCharts.watch('{{ chart_id }}', function() { return cb(true); });
+            } else if (tries > 40) {
+              cb(false);
+            } else {
+              if (++tries > 200) return;
+              setTimeout(attempt, 50);
+            }
+            return;
+          }
+          if (++tries > 200) return;
+          setTimeout(attempt, 50);
+        })();
+      }
 
-      var px = (useTRMNL && window.TRMNLPaint) ? function(v) { return TRMNLPaint.px(v, { el: el }); } : function(v) { return v; };
-      var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
-      var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
-
-      return Highcharts.chart(el, mergeFn(baseOpts, {
-        chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
-        title: { text: null },
-        legend: { enabled: false },
-        credits: { enabled: false },
-        accessibility: { enabled: false },
-        xAxis: {
-          categories: categories,
-          lineWidth: 0,
-          tickLength: 0,
-          labels: { step: 6, y: px(20) }
-        },
-        yAxis: {
-          title: { text: null },
-          labels: { enabled: false },
-          gridLineWidth: 0,
-          plotLines: [{
-            value: {{ stats.avg }},
-                    dashStyle: 'Dash',
-                    width: px(1),
-                    zIndex: 3
-                    }]
-                    },
-                    tooltip: { enabled: false },
-                    plotOptions: {
-                      series: { animation: false },
-                      column: {
-                        borderWidth: 0,
-                        pointPadding: 0.05,
-                        groupPadding: 0.05,
-                        dataLabels: {
-                          enabled: true, crop: false, overflow: 'allow', inside: false,
-                          verticalAlign: 'top', y: px(-25),
-                          formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
-                          style: { fontWeight: 'bold', textOutline: 'none' }
-                                  }
-                                 }
-                        },
-                        series: [{ data: coloredData }]
-                        }));
-                        }
-
-                        function whenReady(cb) {
-                        var tries = 0;
-                        (function attempt() {
-                          if (window.Highcharts) {
-                            if (window.TRMNLCharts) {
-                              TRMNLCharts.watch('{{ chart_id }}', function() { return cb(true); });
-                            } else if (tries > 40) {
-                              cb(false);
-                            } else {
-                              if (++tries > 200) return;
-                              setTimeout(attempt, 50);
-                            }
-                            return;
-                          }
-                          if (++tries > 200) return;
-                          setTimeout(attempt, 50);
-                        })();
-                      }
-
-                      whenReady(buildChart);
-                    })();
-                      </script>
+      whenReady(buildChart);
+    })();
+  </script>
 
   {%- comment -%} Cheapest hours still ahead, for scheduling shiftable loads. {%- endcomment -%}
   {% assign upcoming = hours | where: "is_past", false | sort: "price" %}
   <div class="flex flex--col gap--xsmall">
     <span class="label label--gray">Cheapest hours remaining</span>
     {% for h in upcoming limit: 3 %}
-    <div class="flex flex--row flex--between w--full">
-      <span class="label">{{ h.time }}</span>
-      <span class="label value--tnums">{{ h.display }}</span>
-    </div>
+      <div class="flex flex--row flex--between w--full">
+        <span class="label">{{ h.time }}</span>
+        <span class="label value--tnums">{{ h.display }}</span>
+      </div>
     {% else %}
-    <span class="label">Day is over — peak was {{ stats.max_display }} at {{ stats.max_time }}</span>
+      <span class="label">Day is over — peak was {{ stats.max_display }} at {{ stats.max_time }}</span>
     {% endfor %}
   </div>
 
