@@ -46,7 +46,14 @@ custom_fields:
   - Great Britain: 10YGB----------A
   - Hungary: 10YHU-MAVIR----U
   - Ireland (SEM): 10Y1001A1001A59C
-  - Italy: 10YIT-GRTN-----B
+  - Italy Centre-North: 10Y1001A1001A70O
+  - Italy Centre-South: 10Y1001A1001A71M
+  - Italy North: 10Y1001A1001A73I
+  - Italy SACOAC: 10Y1001A1001A885
+  - Italy SACODC: 10Y1001A1001A893
+  - Italy Sardinia: 10Y1001A1001A74G
+  - Italy Sicily: 10Y1001A1001A75E
+  - Italy South: 10Y1001A1001A788
   - Netherlands: 10YNL----------L
   - Norway NO1: 10YNO-1--------2
   - Norway NO2: 10YNO-2--------T
