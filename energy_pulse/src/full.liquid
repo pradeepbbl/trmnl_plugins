@@ -6,19 +6,19 @@
 
   <div class="grid grid--cols-4 portrait:grid--cols-2">
     <div class="flex flex--col flex--left gap--xsmall">
-      <span class="label label--gray">Now · {{ stats.now_time }}</span>
+      <span class="label label--gray 1bit:text--black">Now · {{ stats.now_time }}</span>
       <span class="value value--large value--tnums">{{ stats.now_display }}</span>
     </div>
     <div class="flex flex--col flex--left gap--xsmall">
-      <span class="label label--gray">Cheapest · {{ stats.min_time }}</span>
+      <span class="label label--gray 1bit:text--black">Cheapest · {{ stats.min_time }}</span>
       <span class="value value--small value--tnums">{{ stats.min_display }}</span>
     </div>
     <div class="flex flex--col flex--left gap--xsmall">
-      <span class="label label--gray">Peak · {{ stats.max_time }}</span>
+      <span class="label label--gray 1bit:text--black">Peak · {{ stats.max_time }}</span>
       <span class="value value--small value--tnums">{{ stats.max_display }}</span>
     </div>
     <div class="flex flex--col flex--left gap--xsmall">
-      <span class="label label--gray">Average</span>
+      <span class="label label--gray 1bit:text--black">Average</span>
       <span class="value value--small value--tnums">{{ stats.avg_display }}</span>
     </div>
   </div>
@@ -146,11 +146,11 @@
   </script>
 
   <div class="flex flex--row flex--between">
-    <span class="label label--base label--gray">
+    <span class="label label--base label--gray 1bit:text--black">
       {{ unit_label }} ({{ unit_note }}){% if vat_percent > 0 %} incl. {{ vat_percent }}% VAT{% endif %} ·
       dashed = today's average
     </span>
-    <span class="label label--base label--gray">
+    <span class="label label--base label--gray 1bit:text--black">
       {% if tomorrow.available %}
         Tomorrow {{ tomorrow.min_display }} – {{ tomorrow.max_display }} (avg {{ tomorrow.avg_display }})
       {% else %}
@@ -165,7 +165,7 @@
         {{ icon_bolt | replace: 'width="48" height="48"', 'width="20" height="20"' }}
         <span class="label label--large">Cost to run</span>
       </div>
-      <span class="label label--base label--gray">Now · Best at {{ best_time }}</span>
+      <span class="label label--base label--gray 1bit:text--black">Now · Best at {{ best_time }}</span>
     </div>
     <div class="grid grid--cols-12">
       {% for u in usages %}
@@ -189,9 +189,9 @@
           </div>
           <div class="content">
             <span class="label label--base">{{ u.label }}</span>
-            <span class="label label--base label--gray">{{ u.kwh }} kWh</span>
+            <span class="label label--base label--gray 1bit:text--black">{{ u.kwh }} kWh</span>
             <span class="value value--base value--tnums">{{ currency_symbol }}{{ u.now }}</span>
-            <span class="label label--base label--gray value--tnums">
+            <span class="label label--base label--gray 1bit:text--black value--tnums">
               Best {{ currency_symbol }}{{ u.best }}
             </span>
           </div>

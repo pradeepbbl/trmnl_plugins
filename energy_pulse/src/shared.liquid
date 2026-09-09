@@ -32,11 +32,23 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
 
 {%- capture no_data -%}
 <div class="layout layout--col layout--center gap--small">
-  <span class="title title--small">{{ error | default: "No price data" }}</span>
-  {% if error_detail %}
-    <span class="label label--small label--gray text--center">{{ error_detail }}</span>
+  {% if data_age_hours and data_age_hours < 24 %}
+    <span class="title title--large lg:title--xxlarge text--center">ENTSO-E hasn't published today's prices yet</span>
   {% else %}
-    <span class="label label--small label--gray text--center">
+    <span class="title title--large lg:title--xxlarge text--center">No price data available</span>
+  {% endif %}
+  {% if error_detail %}
+    <span class="label label--large lg:label--xxlarge label--gray text--center">{{ error_detail }}</span>
+  {% elsif data_age_hours %}
+    <span class="label label--large lg:label--xxlarge label--gray text--center">
+      Last known data from {{ data_age_hours | round }}h ago — check back shortly
+    </span>
+    <div class="flex flex--row flex--center-x flex--center-y gap--xsmall">
+      <img class="image image--small" src="https://qrtag.net/api/qr_6.png?url={{ 'https://transparency.entsoe.eu/news' | url_encode }}" alt="QR code to ENTSO-E news">
+     <span class="label label--gray 1bit:text--black">Scan for ENTSO-E status updates</span>
+    </div>
+  {% else %}
+    <span class="label label--large lg:label--xxlarge label--gray text--center">
       Couldn't load price data. Check plugin settings or try again shortly.
     </span>
   {% endif %}
