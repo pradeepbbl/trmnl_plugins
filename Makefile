@@ -17,7 +17,7 @@ $(error PLUGIN is required, e.g. make lint PLUGIN=energy_pulse)
 endif
 endif
 
-DOCKER_RUN := docker run --rm --pull always \
+DOCKER_RUN := docker run --rm --pull always --net=host \
 	--volume "$(CURDIR)/$(PLUGIN):/plugin"
 
 .PHONY: help serve build lint pull test

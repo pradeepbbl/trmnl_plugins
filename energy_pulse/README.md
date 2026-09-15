@@ -5,6 +5,9 @@ prices** for a European bidding zone, ultimately sourced from the
 [ENTSO-E Transparency Platform](https://transparency.entsoe.eu) via
 a small API service this plugin polls directly.
 
+> **Coverage:** ENTSO-E markets only — EU, UK, Norway, and Switzerland. Not
+> available for the US or other non-ENTSO-E regions.
+
 ![marketplace preview](docs/featured.png)
 
 ![full view](docs/full.png)
@@ -30,7 +33,8 @@ you.
 
 | Field | Notes |
 | --- | --- |
-| Bidding zone | 26 common zones, keyed by EIC code. Default Netherlands. |
+| Country | 18 ENTSO-E countries/markets. Default Netherlands. |
+| Zone | Only shown for countries with multiple pricing zones (Great Britain, Italy, Denmark, Norway, Sweden). Options load live, scoped to the chosen country, from the plugin backend's `/api/v1/zones` endpoint — 33 zones total (EIC-coded, plus 14 GB regions keyed by GSP letter — see Caveats). |
 | Price unit | `€.179/kWh` (default), `17.9 ct/kWh`, or `179 EUR/MWh`. |
 | Usage examples | Optional. One `Label = kWh` per line; `off` hides the row. |
 | VAT % | Optional; applied on top of the wholesale price. |
@@ -112,8 +116,16 @@ directory. `serve` polls whatever `polling_url` is set to in `.trmnlp.yml`
 
 ## Caveats
 
+- **Europe/ENTSO-E only.** Bidding zones cover the EU, UK, Norway, and
+  Switzerland. The US and other non-ENTSO-E markets use different data
+  sources entirely and aren't supported.
 - Prices are **wholesale day-ahead**, not a retail tariff — no grid fees,
   levies or supplier margin. The VAT field is the only markup applied.
+  **Exception: Great Britain.** ENTSO-E has carried no GB day-ahead data
+  since Brexit, so GB zones are backed by Octopus Energy's public Agile
+  tariff instead — a **retail** unit rate (network costs and supplier
+  margin included, VAT excluded) for the selected GSP region, not a
+  GB-wide wholesale price.
 - Tomorrow's prices don't exist before the day-ahead auction clears, so the
   footer says so rather than showing stale numbers.
 - `refresh_interval` is one hour, which keeps the "Now" tile honest and picks
