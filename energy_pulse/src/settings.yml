@@ -4,7 +4,7 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 polling_verb: get
 framework_version: 3.3.1
-polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={% if country == \"GB\" %}{{ gb_zone }}{% elsif country == \"IT\" %}{{ it_zone }}{% elsif country == \"DK\" %}{{ dk_zone }}{% elsif country == \"NOR\" %}{{ no_zone }}{% elsif country == \"SE\" %}{{ se_zone }}{% else %}{{ country }}{% endif %}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
+polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={% if country == \"GB\" %}{{ gb_zone }}{% elsif country == \"IT\" %}{{ it_zone }}{% elsif country == \"DK\" %}{{ dk_zone }}{% elsif country == \"NOR\" %}{{ no_zone }}{% elsif country == \"SE\" %}{{ se_zone }}{% else %}{{ country }}{% endif %}&price_unit={{ price_unit }}&vat_percent={% unless country == \"GB\" %}{{ vat_percent }}{% endunless %}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
 polling_headers: ''
 polling_body: ''
 oauth_enabled: 'false'
@@ -59,6 +59,8 @@ custom_fields:
     - gb_zone
     visible:
     - gb_zone
+    hidden:
+    - vat_percent
   - when: "IT"
     required:
     - it_zone
@@ -171,7 +173,7 @@ custom_fields:
   field_type: number
   name: VAT %
   description: Optional. Added on top of the wholesale price.
-  help_text: Leave blank for raw wholesale prices.
+  help_text: Leave blank for raw wholesale prices. Not shown for Great Britain — rates already include VAT.
   optional: true
   min: 0
   max: 100
