@@ -33,7 +33,7 @@ you.
 
 | Field | Notes |
 | --- | --- |
-| Country | 18 ENTSO-E countries/markets. Default Netherlands. |
+| Country | 19 ENTSO-E countries/markets. Default Netherlands. |
 | Zone | Five separate fields (Great Britain, Italy, Denmark, Norway, Sweden Zone), each shown only when its own country is selected, via conditional visibility on Country. Great Britain has 14 GSP regions (see Caveats); Italy 8, Norway 5, Sweden 4, Denmark 2 — 33 zones total, but only the relevant country's list is ever shown. |
 | Price unit | `€.179/kWh` (default), `17.9 ct/kWh`, or `179 EUR/MWh`. |
 | Usage examples | Optional. One `Label = kWh` per line; `off` hides the row. |
