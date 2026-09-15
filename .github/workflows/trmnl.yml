@@ -64,4 +64,3 @@ jobs:
           TRMNL_API_KEY: ${{ secrets.TRMNL_API_KEY }}
           TRMNL_PREVIEW_PLUGIN_ID: ${{ secrets.TRMNL_PREVIEW_PLUGIN_ID }}
           TRMNL_PROD_PLUGIN_ID: ${{ secrets.TRMNL_PROD_PLUGIN_ID }}
-          TRMNL_PREVIEW_PLUGIN_ID: ${{ secrets.TRMNL_PREVIEW_PLUGIN_ID }}
