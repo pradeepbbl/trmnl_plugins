@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches: [master]
-    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
+    tags: ["*-v[0-9]+.[0-9]+.[0-9]+*"]
 
 jobs:
   discover:
@@ -15,8 +15,21 @@ jobs:
       - uses: actions/checkout@v6
       - id: find
         run: |
-          plugins=$(find . -mindepth 2 -maxdepth 2 -name '.trmnlp.yml' -printf '%h\n' \
-            | sed 's|^\./||' | sort | jq -R -s -c 'split("\n")[:-1]')
+          all_plugins=$(find . -mindepth 2 -maxdepth 2 -name '.trmnlp.yml' -printf '%h\n' \
+            | sed 's|^\./||' | sort)
+
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            tag="${{ github.ref_name }}"
+            plugin="${tag%-v*}"
+            if ! grep -qxF "$plugin" <<< "$all_plugins"; then
+              echo "::error::Tag '$tag' doesn't map to a known plugin directory (parsed '$plugin')"
+              exit 1
+            fi
+            plugins=$(jq -Rn --arg p "$plugin" '[$p]')
+          else
+            plugins=$(jq -R -s -c 'split("\n")[:-1]' <<< "$all_plugins")
+          fi
+
           echo "plugins=$plugins" >> "$GITHUB_OUTPUT"
 
   lint:
@@ -49,18 +62,21 @@ jobs:
         with:
           ruby-version: "4.0"
       - run: gem install trmnl_preview
-      # Master pushes publish to a preview plugin instance; tag pushes release to
-      # the production instance -- both ids come from secrets rather than
-      # settings.yml.
       - name: trmnlp push (${{ matrix.plugin }})
         working-directory: ${{ matrix.plugin }}
         run: |
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            trmnlp push --force --id "$TRMNL_PROD_PLUGIN_ID"
+            var_name="TRMNL_PROD_PLUGIN_ID_$(echo "${{ matrix.plugin }}" | tr '[:lower:]-' '[:upper:]_')"
+            plugin_id="${!var_name}"
+            if [ -z "$plugin_id" ]; then
+              echo "::error::No $var_name secret set for plugin '${{ matrix.plugin }}'"
+              exit 1
+            fi
+            trmnlp push --force --id "$plugin_id"
           else
             trmnlp push --force --id "$TRMNL_PREVIEW_PLUGIN_ID"
           fi
         env:
           TRMNL_API_KEY: ${{ secrets.TRMNL_API_KEY }}
           TRMNL_PREVIEW_PLUGIN_ID: ${{ secrets.TRMNL_PREVIEW_PLUGIN_ID }}
-          TRMNL_PROD_PLUGIN_ID: ${{ secrets.TRMNL_PROD_PLUGIN_ID }}
+          TRMNL_PROD_PLUGIN_ID_ENERGY_PULSE: ${{ secrets.TRMNL_PROD_PLUGIN_ID_ENERGY_PULSE }}
