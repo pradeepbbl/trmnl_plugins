@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Marketplace description, in-app plugin bio, and README now state upfront
+  that coverage is ENTSO-E markets only (EU, UK, Norway, Switzerland) and
+  that the US / other regions aren't supported, to set expectations before
+  install.
+- Added `help_text` to the bidding zone setting pointing out the same scope
+  for installers who can't find their country in the list.
+- Great Britain is now 14 selectable GSP regions (Octopus Agile tariff
+  areas) instead of one flat "Great Britain" option, so installers get
+  their own region's rates instead of always London's. Backed by the
+  `trmnl_plugin_backend` GB Octopus Agile fallback, which now takes the
+  region per request instead of a single hardcoded default.
+
 ## [1.0.0] - 2026-08-22
 
 ### Added

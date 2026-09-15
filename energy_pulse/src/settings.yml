@@ -1,11 +1,10 @@
 ---
-id: 453401
 strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
 polling_verb: get
 framework_version: 3.2.0
-polling_url: https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ bidding_zone }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}
+polling_url: https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ zone | default:country }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}
 polling_headers: ''
 polling_body: ''
 oauth_enabled: 'false'
@@ -29,45 +28,97 @@ oauth_expiry_field_name: ''
 oauth_expiry_strategy: ''
 oauth_fixed_expiry_ms: ''
 custom_fields:
-- keyname: bidding_zone
+- keyname: country
   field_type: select
-  name: Bidding zone
-  description: The market area to show prices for.
+  name: Country
+  description: The country or market area to show prices for.
+  help_text: Covers ENTSO-E members only — EU, UK, Norway, and Switzerland. Not available for the US or other non-ENTSO-E markets. Great Britain, Italy, Denmark, Norway, and Sweden have multiple pricing zones — pick the specific zone below after choosing the country.
   default: 10YNL----------L
   options:
   - Austria: 10YAT-APG------L
   - Belgium: 10YBE----------2
   - Czechia: 10YCZ-CEPS-----N
-  - Denmark DK1: 10YDK-1--------W
-  - Denmark DK2: 10YDK-2--------M
+  - Denmark: DK
   - Finland: 10YFI-1--------U
   - France: 10YFR-RTE------C
   - Germany-Luxembourg: 10Y1001A1001A82H
-  - Great Britain: 10YGB----------A
+  - Great Britain: GB
   - Hungary: 10YHU-MAVIR----U
   - Ireland (SEM): 10Y1001A1001A59C
-  - Italy Centre-North: 10Y1001A1001A70O
-  - Italy Centre-South: 10Y1001A1001A71M
-  - Italy North: 10Y1001A1001A73I
-  - Italy SACOAC: 10Y1001A1001A885
-  - Italy SACODC: 10Y1001A1001A893
-  - Italy Sardinia: 10Y1001A1001A74G
-  - Italy Sicily: 10Y1001A1001A75E
-  - Italy South: 10Y1001A1001A788
+  - Italy: IT
   - Netherlands: 10YNL----------L
-  - Norway NO1: 10YNO-1--------2
-  - Norway NO2: 10YNO-2--------T
-  - Norway NO3: 10YNO-3--------J
-  - Norway NO4: 10YNO-4--------9
-  - Norway NO5: 10Y1001A1001A48H
+  - Norway: NO
   - Poland: 10YPL-AREA-----S
   - Portugal: 10YPT-REN------W
   - Spain: 10YES-REE------0
-  - Sweden SE1: 10Y1001A1001A44P
-  - Sweden SE2: 10Y1001A1001A45N
-  - Sweden SE3: 10Y1001A1001A46L
-  - Sweden SE4: 10Y1001A1001A47J
+  - Sweden: SE
   - Switzerland: 10YCH-SWISSGRIDZ
+  conditional_validation:
+  - when: "gb"
+    required:
+    - zone
+  - when: "it"
+    required:
+    - zone
+  - when: "dk"
+    required:
+    - zone
+  - when: "no"
+    required:
+    - zone
+  - when: "se"
+    required:
+    - zone
+  - when: "10yat-apg------l"
+    hidden:
+    - zone
+  - when: "10ybe----------2"
+    hidden:
+    - zone
+  - when: "10ycz-ceps-----n"
+    hidden:
+    - zone
+  - when: "10yfi-1--------u"
+    hidden:
+    - zone
+  - when: "10yfr-rte------c"
+    hidden:
+    - zone
+  - when: "10y1001a1001a82h"
+    hidden:
+    - zone
+  - when: "10yhu-mavir----u"
+    hidden:
+    - zone
+  - when: "10y1001a1001a59c"
+    hidden:
+    - zone
+  - when: "10ynl----------l"
+    hidden:
+    - zone
+  - when: "10ypl-area-----s"
+    hidden:
+    - zone
+  - when: "10ypt-ren------w"
+    hidden:
+    - zone
+  - when: "10yes-ree------0"
+    hidden:
+    - zone
+  - when: "10ych-swissgridz"
+    hidden:
+    - zone
+- keyname: zone
+  field_type: xhrSelect
+  name: Zone
+  description: The specific pricing zone within the selected country.
+  help_text: Only used when Country is Great Britain, Italy, Denmark, Norway, or Sweden — ignored otherwise.
+  optional: true
+  default: GB-C
+  depends_on: country
+  endpoint: "https://trmnl-plugin-api.spawnlab.dev/api/v1/zones?country={{ country }}"
+  label_field: label
+  value_field: value
 - keyname: price_unit
   field_type: select
   name: Price unit
@@ -100,12 +151,13 @@ custom_fields:
   field_type: author_bio
   name: About this plugin
   category: environment,finance
-  description: Energy Pulse was built by Pradeep Mishra to surface European day-ahead
-    electricity prices from ENTSO-E at a glance. Questions, bugs, or feature
-    requests? Open an issue on GitHub or reach out by email.<br/>Source and
-    docs live in the repo linked below.
+  description: Energy Pulse covers ENTSO-E day-ahead electricity markets only —
+    EU, UK, Norway, and Switzerland. It does not support the US or other
+    non-ENTSO-E markets. Questions, bugs, or feature requests? Open an issue
+    on GitHub or reach out by email.<br/>Source and docs live in the repo
+    linked below.
   github_url: https://github.com/pradeepbbl/trmnl_plugins
   email_address: pradeepbbl@gmail.com
 name: Energy Pulse
-description: Day-ahead energy prices at a glance
+description: European day-ahead power prices
 refresh_interval: 1440
