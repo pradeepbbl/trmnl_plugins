@@ -4,7 +4,7 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 polling_verb: get
 framework_version: 3.3.1
-polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ gb_zone | default: it_zone | default: dk_zone | default: no_zone | default: se_zone | default: country }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
+polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={% if country == \"GB\" %}{{ gb_zone }}{% elsif country == \"IT\" %}{{ it_zone }}{% elsif country == \"DK\" %}{{ dk_zone }}{% elsif country == \"NOR\" %}{{ no_zone }}{% elsif country == \"SE\" %}{{ se_zone }}{% else %}{{ country }}{% endif %}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
 polling_headers: ''
 polling_body: ''
 oauth_enabled: 'false'
@@ -47,34 +47,34 @@ custom_fields:
   - Ireland (SEM): 10Y1001A1001A59C
   - Italy: IT
   - Netherlands: 10YNL----------L
-  - Norway: NO
+  - Norway: NOR
   - Poland: 10YPL-AREA-----S
   - Portugal: 10YPT-REN------W
   - Spain: 10YES-REE------0
   - Sweden: SE
   - Switzerland: 10YCH-SWISSGRIDZ
   conditional_validation:
-  - when: "gb"
+  - when: "GB"
     required:
     - gb_zone
     visible:
     - gb_zone
-  - when: "it"
+  - when: "IT"
     required:
     - it_zone
     visible:
     - it_zone
-  - when: "dk"
+  - when: "DK"
     required:
     - dk_zone
     visible:
     - dk_zone
-  - when: "no"
+  - when: "NOR"
     required:
     - no_zone
     visible:
     - no_zone
-  - when: "se"
+  - when: "SE"
     required:
     - se_zone
     visible:
@@ -131,11 +131,11 @@ custom_fields:
   optional: true
   default: 10YNO-1--------2
   options:
-  - NO1: 10YNO-1--------2
-  - NO2: 10YNO-2--------T
-  - NO3: 10YNO-3--------J
-  - NO4: 10YNO-4--------9
-  - NO5: 10Y1001A1001A48H
+  - Oslo (NO1): 10YNO-1--------2
+  - Kristiansand (NO2): 10YNO-2--------T
+  - Trondheim (NO3): 10YNO-3--------J
+  - Tromsø (NO4): 10YNO-4--------9
+  - Bergen (NO5): 10Y1001A1001A48H
 - keyname: se_zone
   field_type: select
   name: Sweden Zone

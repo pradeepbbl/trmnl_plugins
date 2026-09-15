@@ -96,7 +96,7 @@
               groupPadding: 0.05,
               dataLabels: {
                 enabled: true, crop: false, overflow: 'allow', inside: false,
-                formatter: function() { return this.point.labelText ? `€${ this.point.labelText}` : ''; },
+                formatter: function() { return this.point.labelText ? `{{ currency_symbol }}${ this.point.labelText}` : ''; },
                 style: { fontWeight: 'bold', textOutline: 'none' }
               }
             }
