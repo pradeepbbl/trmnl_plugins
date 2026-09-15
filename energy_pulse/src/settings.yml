@@ -3,8 +3,8 @@ strategy: polling
 no_screen_padding: 'no'
 dark_mode: 'no'
 polling_verb: get
-framework_version: 3.2.0
-polling_url: https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ zone | default:country }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}
+framework_version: 3.3.1
+polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={{ gb_zone | default: it_zone | default: dk_zone | default: no_zone | default: se_zone | default: country }}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
 polling_headers: ''
 polling_body: ''
 oauth_enabled: 'false'
@@ -32,7 +32,7 @@ custom_fields:
   field_type: select
   name: Country
   description: The country or market area to show prices for.
-  help_text: Covers ENTSO-E members only — EU, UK, Norway, and Switzerland. Not available for the US or other non-ENTSO-E markets. Great Britain, Italy, Denmark, Norway, and Sweden have multiple pricing zones — pick the specific zone below after choosing the country.
+  help_text: Covers ENTSO-E members only — EU, UK, Norway, and Switzerland. Not available for the US or other non-ENTSO-E markets. Great Britain, Italy, Denmark, Norway, and Sweden have multiple pricing zones — a zone field for that country will appear below once selected.
   default: 10YNL----------L
   options:
   - Austria: 10YAT-APG------L
@@ -56,69 +56,97 @@ custom_fields:
   conditional_validation:
   - when: "gb"
     required:
-    - zone
+    - gb_zone
+    visible:
+    - gb_zone
   - when: "it"
     required:
-    - zone
+    - it_zone
+    visible:
+    - it_zone
   - when: "dk"
     required:
-    - zone
+    - dk_zone
+    visible:
+    - dk_zone
   - when: "no"
     required:
-    - zone
+    - no_zone
+    visible:
+    - no_zone
   - when: "se"
     required:
-    - zone
-  - when: "10yat-apg------l"
-    hidden:
-    - zone
-  - when: "10ybe----------2"
-    hidden:
-    - zone
-  - when: "10ycz-ceps-----n"
-    hidden:
-    - zone
-  - when: "10yfi-1--------u"
-    hidden:
-    - zone
-  - when: "10yfr-rte------c"
-    hidden:
-    - zone
-  - when: "10y1001a1001a82h"
-    hidden:
-    - zone
-  - when: "10yhu-mavir----u"
-    hidden:
-    - zone
-  - when: "10y1001a1001a59c"
-    hidden:
-    - zone
-  - when: "10ynl----------l"
-    hidden:
-    - zone
-  - when: "10ypl-area-----s"
-    hidden:
-    - zone
-  - when: "10ypt-ren------w"
-    hidden:
-    - zone
-  - when: "10yes-ree------0"
-    hidden:
-    - zone
-  - when: "10ych-swissgridz"
-    hidden:
-    - zone
-- keyname: zone
-  field_type: xhrSelect
-  name: Zone
-  description: The specific pricing zone within the selected country.
-  help_text: Only used when Country is Great Britain, Italy, Denmark, Norway, or Sweden — ignored otherwise.
+    - se_zone
+    visible:
+    - se_zone
+- keyname: gb_zone
+  field_type: select
+  name: Great Britain Zone
+  description: The GSP payment region to show prices for.
   optional: true
   default: GB-C
-  depends_on: country
-  endpoint: "https://trmnl-plugin-api.spawnlab.dev/api/v1/zones?country={{ country }}"
-  label_field: label
-  value_field: value
+  options:
+  - East England: GB-A
+  - East Midlands: GB-B
+  - London: GB-C
+  - North East England: GB-F
+  - North Scotland: GB-P
+  - North Wales, Merseyside & Cheshire: GB-D
+  - North West England: GB-G
+  - South & Central Scotland: GB-N
+  - South East England: GB-J
+  - South Wales: GB-K
+  - South West England: GB-L
+  - Southern England: GB-H
+  - West Midlands: GB-E
+  - Yorkshire: GB-M
+- keyname: it_zone
+  field_type: select
+  name: Italy Zone
+  description: The pricing zone to show prices for.
+  optional: true
+  default: 10Y1001A1001A73I
+  options:
+  - Centre-North: 10Y1001A1001A70O
+  - Centre-South: 10Y1001A1001A71M
+  - North: 10Y1001A1001A73I
+  - SACOAC: 10Y1001A1001A885
+  - SACODC: 10Y1001A1001A893
+  - Sardinia: 10Y1001A1001A74G
+  - Sicily: 10Y1001A1001A75E
+  - South: 10Y1001A1001A788
+- keyname: dk_zone
+  field_type: select
+  name: Denmark Zone
+  description: The pricing zone to show prices for.
+  optional: true
+  default: 10YDK-1--------W
+  options:
+  - DK1: 10YDK-1--------W
+  - DK2: 10YDK-2--------M
+- keyname: no_zone
+  field_type: select
+  name: Norway Zone
+  description: The pricing zone to show prices for.
+  optional: true
+  default: 10YNO-1--------2
+  options:
+  - NO1: 10YNO-1--------2
+  - NO2: 10YNO-2--------T
+  - NO3: 10YNO-3--------J
+  - NO4: 10YNO-4--------9
+  - NO5: 10Y1001A1001A48H
+- keyname: se_zone
+  field_type: select
+  name: Sweden Zone
+  description: The pricing zone to show prices for.
+  optional: true
+  default: 10Y1001A1001A44P
+  options:
+  - SE1: 10Y1001A1001A44P
+  - SE2: 10Y1001A1001A45N
+  - SE3: 10Y1001A1001A46L
+  - SE4: 10Y1001A1001A47J
 - keyname: price_unit
   field_type: select
   name: Price unit
