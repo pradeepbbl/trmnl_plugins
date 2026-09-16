@@ -4,7 +4,7 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 polling_verb: get
 framework_version: 3.3.1
-polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={% if country == \"GB\" %}{{ gb_zone }}{% elsif country == \"IT\" %}{{ it_zone }}{% elsif country == \"DK\" %}{{ dk_zone }}{% elsif country == \"NOR\" %}{{ no_zone }}{% elsif country == \"SE\" %}{{ se_zone }}{% else %}{{ country }}{% endif %}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
+polling_url: "https://trmnl-plugin-api.spawnlab.dev/api/v1/energy-prices?bidding_zone={% if country == \"GB\" %}{{ gb_zone }}{% elsif country == \"IT\" %}{{ it_zone }}{% elsif country == \"DK\" %}{{ dk_zone }}{% elsif country == \"NOR\" %}{{ no_zone }}{% elsif country == \"SE\" %}{{ se_zone }}{% elsif country == \"US\" %}{{ us_zone }}{% else %}{{ country }}{% endif %}&price_unit={{ price_unit }}&vat_percent={{ vat_percent }}&usage_examples={{ usage_examples | url_encode }}&tz={{ trmnl.user.time_zone_iana | url_encode }}&utc_offset={{ trmnl.user.utc_offset }}"
 polling_headers: ''
 polling_body: ''
 oauth_enabled: 'false'
@@ -32,7 +32,7 @@ custom_fields:
   field_type: select
   name: Country
   description: The country or market area to show prices for.
-  help_text: Covers ENTSO-E members only — EU, UK, Norway, and Switzerland. Not available for the US or other non-ENTSO-E markets. Great Britain, Italy, Denmark, Norway, and Sweden have multiple pricing zones — a zone field for that country will appear below once selected.
+  help_text: Covers ENTSO-E members (EU, UK, Norway, Switzerland) plus the US's NYISO (New York) market. Not available for other non-ENTSO-E, non-NYISO markets. Great Britain, Italy, Denmark, Norway, Sweden, and the United States have multiple pricing zones — a zone field for that country will appear below once selected.
   default: 10YNL----------L
   options:
   - Austria: 10YAT-APG------L
@@ -54,6 +54,7 @@ custom_fields:
   - Spain: 10YES-REE------0
   - Sweden: SE
   - Switzerland: 10YCH-SWISSGRIDZ
+  - United States: US
   conditional_validation:
   - when: "GB"
     required:
@@ -80,6 +81,11 @@ custom_fields:
     - se_zone
     visible:
     - se_zone
+  - when: "US"
+    required:
+    - us_zone
+    visible:
+    - us_zone
 - keyname: gb_zone
   field_type: select
   name: Great Britain Zone
@@ -148,6 +154,24 @@ custom_fields:
   - SE2: 10Y1001A1001A45N
   - SE3: 10Y1001A1001A46L
   - SE4: 10Y1001A1001A47J
+- keyname: us_zone
+  field_type: select
+  name: United States Zone
+  description: The NYISO load zone to show prices for.
+  optional: true
+  default: NYISO-NYC
+  options:
+  - Capital District (Albany): NYISO-CAPITL
+  - Central New York (Syracuse): NYISO-CENTRL
+  - Dunwoodie: NYISO-DUNWOD
+  - Genesee (Rochester): NYISO-GENESE
+  - Hudson Valley: NYISO-HUDVL
+  - Long Island: NYISO-LONGIL
+  - Millwood: NYISO-MILLWD
+  - Mohawk Valley (Utica): NYISO-MHKVL
+  - New York City: NYISO-NYC
+  - North Country: NYISO-NORTH
+  - Western New York (Buffalo): NYISO-WEST
 - keyname: price_unit
   field_type: select
   name: Price unit
@@ -180,13 +204,13 @@ custom_fields:
   field_type: author_bio
   name: About this plugin
   category: environment,finance
-  description: Energy Pulse covers ENTSO-E day-ahead electricity markets only —
-    EU, UK, Norway, and Switzerland. It does not support the US or other
-    non-ENTSO-E markets. Questions, bugs, or feature requests? Open an issue
-    on GitHub or reach out by email.<br/>Source and docs live in the repo
-    linked below.
+  description: Energy Pulse covers ENTSO-E day-ahead electricity markets — EU,
+    UK, Norway, and Switzerland — plus the US's NYISO (New York) market. It
+    does not support other non-ENTSO-E, non-NYISO markets. Questions, bugs,
+    or feature requests? Open an issue on GitHub or reach out by
+    email.<br/>Source and docs live in the repo linked below.
   github_url: https://github.com/pradeepbbl/trmnl_plugins
   email_address: pradeepbbl@gmail.com
 name: Energy Pulse
-description: European day-ahead power prices
+description: Europe & NYISO day-ahead prices
 refresh_interval: 1440

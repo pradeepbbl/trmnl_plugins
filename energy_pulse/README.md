@@ -1,12 +1,12 @@
 # Day-Ahead Energy Prices
 
 A TRMNL plugin that shows **today's hourly day-ahead electricity
-prices** for a European bidding zone, ultimately sourced from the
-[ENTSO-E Transparency Platform](https://transparency.entsoe.eu) via
-a small API service this plugin polls directly.
+prices** for a European or US bidding zone, ultimately sourced from the
+[ENTSO-E Transparency Platform](https://transparency.entsoe.eu) (Europe) or
+NYISO (New York) via a small API service this plugin polls directly.
 
-> **Coverage:** ENTSO-E markets only — EU, UK, Norway, and Switzerland. Not
-> available for the US or other non-ENTSO-E regions.
+> **Coverage:** ENTSO-E markets — EU, UK, Norway, and Switzerland — plus
+>  New York. Not available for other non-ENTSO-E, non-NYISO regions.
 
 ![marketplace preview](docs/featured.png)
 
@@ -33,8 +33,8 @@ you.
 
 | Field | Notes |
 | --- | --- |
-| Country | 19 ENTSO-E countries/markets. Default Netherlands. |
-| Zone | Five separate fields (Great Britain, Italy, Denmark, Norway, Sweden Zone), each shown only when its own country is selected, via conditional visibility on Country. Great Britain has 14 GSP regions (see Caveats); Italy 8, Norway 5, Sweden 4, Denmark 2 — 33 zones total, but only the relevant country's list is ever shown. |
+| Country | 20 countries/markets — 19 ENTSO-E plus the United States (NYISO). Default Netherlands. |
+| Zone | Six separate fields (Great Britain, Italy, Denmark, Norway, Sweden, United States Zone), each shown only when its own country is selected, via conditional visibility on Country. Great Britain has 14 GSP regions (see Caveats); Italy 8, Norway 5, Sweden 4, Denmark 2, United States 11 — 44 zones total, but only the relevant country's list is ever shown. |
 | Price unit | `€.179/kWh` (default), `17.9 ct/kWh`, or `179 EUR/MWh`. |
 | Usage examples | Optional. One `Label = kWh` per line; `off` hides the row. |
 | VAT % | Optional; applied on top of the wholesale price. |
@@ -113,20 +113,3 @@ make serve PLUGIN=energy_pulse        # http://localhost:4567
 
 Run these from the repo root; `PLUGIN` is required and selects the plugin
 directory. `serve` polls whatever `polling_url` is set to in `.trmnlp.yml`
-
-## Caveats
-
-- **Europe/ENTSO-E only.** Bidding zones cover the EU, UK, Norway, and
-  Switzerland. The US and other non-ENTSO-E markets use different data
-  sources entirely and aren't supported.
-- Prices are **wholesale day-ahead**, not a retail tariff — no grid fees,
-  levies or supplier margin. The VAT field is the only markup applied.
-  **Exception: Great Britain.** ENTSO-E has carried no GB day-ahead data
-  since Brexit, so GB zones are backed by Octopus Energy's public Agile
-  tariff instead — a **retail** unit rate (network costs and supplier
-  margin included, VAT excluded) for the selected GSP region, not a
-  GB-wide wholesale price.
-- Tomorrow's prices don't exist before the day-ahead auction clears, so the
-  footer says so rather than showing stale numbers.
-- `refresh_interval` is one hour, which keeps the "Now" tile honest and picks
-  up tomorrow's publication without hammering the API.

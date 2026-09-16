@@ -30,9 +30,20 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
 </div>
 {% endtemplate %}
 
+{%- comment -%}
+  ENTSO-E-specific messaging only applies to genuine ENTSO-E members: GB is
+  backed by Octopus Agile (no ENTSO-E day-ahead data since Brexit) and US is
+  backed by NYISO, so both fall back to the generic message instead.
+{%- endcomment -%}
+{%- assign country = trmnl.plugin_settings.custom_fields_values.country -%}
+{%- assign is_entsoe = true -%}
+{%- if country == "GB" or country == "US" -%}
+  {%- assign is_entsoe = false -%}
+{%- endif -%}
+
 {%- capture no_data -%}
 <div class="layout layout--col layout--center gap--small">
-  {% if data_age_hours and data_age_hours < 24 %}
+  {% if is_entsoe  %}
     <span class="title title--large lg:title--xxlarge text--center">ENTSO-E hasn't published today's prices yet</span>
   {% else %}
     <span class="title title--large lg:title--xxlarge text--center">No price data available</span>
@@ -43,10 +54,12 @@ ok, hours[], stats{}, tomorrow{}, unit_label, zone_label, date_label.
     <span class="label label--large lg:label--xxlarge label--gray text--center">
       Last known data from {{ data_age_hours | round }}h ago — check back shortly
     </span>
+    {% if is_entsoe %}
     <div class="flex flex--row flex--center-x flex--center-y gap--xsmall">
       <img class="image image--small" src="https://qrtag.net/api/qr_6.png?url={{ 'https://transparency.entsoe.eu/news' | url_encode }}" alt="QR code to ENTSO-E news">
      <span class="label label--gray 1bit:text--black">Scan for ENTSO-E status updates</span>
     </div>
+    {% endif %}
   {% else %}
     <span class="label label--large lg:label--xxlarge label--gray text--center">
       Couldn't load price data. Check plugin settings or try again shortly.
