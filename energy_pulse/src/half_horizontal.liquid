@@ -91,6 +91,7 @@
                 borderWidth: 0,
                 pointPadding: 0.05,
                 groupPadding: 0.05,
+                minPointLength: px(2),
                 dataLabels: {
                   enabled: true, crop: false, overflow: 'allow', inside: false,
                   formatter: function() { return this.point.labelText ? `{{ currency_symbol }}${ this.point.labelText}` : ''; },
