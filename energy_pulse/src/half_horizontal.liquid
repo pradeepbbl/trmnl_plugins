@@ -60,6 +60,7 @@
           });
           var baseOpts = useTRMNL ? TRMNLCharts.options({ el: el }) : {};
           var mergeFn = useTRMNL ? TRMNLCharts.merge : function(a, b) { return Object.assign({}, a, b); };
+          var textStyle = (useTRMNL && TRMNLCharts.textStyle) ? TRMNLCharts.textStyle('label', { el: el }) : {};
 
           return Highcharts.chart(el, mergeFn(baseOpts, {
             chart: { type: 'column', height: null, backgroundColor: 'transparent', spacing: [5, 0, 0, 0], animation: false },
@@ -75,7 +76,15 @@
             },
             yAxis: {
               title: { text: null },
-              labels: { enabled: false },
+              labels: {
+                enabled: true,
+                style: textStyle,
+                formatter: function() {
+                  var v = this.value;
+                  var s = Highcharts.numberFormat(Math.abs(v), -1);
+                  return (v < 0 ? '-' : '') + '{{ currency_symbol }}' + s;
+                }
+              },
               gridLineWidth: 0,
               plotLines: [{
                 value: {{ stats.avg }},
