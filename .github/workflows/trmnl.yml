@@ -15,11 +15,16 @@ jobs:
     outputs:
       plugins: ${{ steps.find.outputs.plugins }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
       - id: find
+        env:
+          GIT_REF: ${{ github.ref }}
+          GIT_REF_NAME: ${{ github.ref_name }}
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            tag="${{ github.ref_name }}"
+          if [[ "$GIT_REF" == refs/tags/* ]]; then
+            tag="$GIT_REF_NAME"
             plugin="${tag%-v*}"
 
             # Apple Health Plugin
@@ -32,7 +37,7 @@ jobs:
               echo "::error::Tag '$tag' doesn't map to a known plugin directory (parsed '$plugin')"
               exit 1
             fi
-            plugins="[\"$plugin\"]"
+            plugins=$(jq -n -c --arg p "$plugin" '[$p]')
           else
             plugins=$(find . -mindepth 2 -maxdepth 2 -name '.trmnlp.yml' -printf '%h\n' \
               | sed 's|^\./||' | sort | jq -R -s -c 'split("\n")[:-1]')
@@ -48,11 +53,13 @@ jobs:
       matrix:
         plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@762794c140bbeda0f1224786aa33b4b46783a6c1 # v1.326.0
         with:
           ruby-version: "4.0"
-      - run: gem install trmnl_preview
+      - run: gem install trmnl_preview -v 0.12.0
       - name: trmnlp lint (${{ matrix.plugin }})
         working-directory: ${{ matrix.plugin }}
         run: trmnlp lint
@@ -65,19 +72,21 @@ jobs:
       matrix:
         plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@762794c140bbeda0f1224786aa33b4b46783a6c1 # v1.326.0
         with:
           ruby-version: "4.0"
-      - run: gem install trmnl_preview
+      - run: gem install trmnl_preview -v 0.12.0
       - name: trmnlp push (${{ matrix.plugin }})
         working-directory: ${{ matrix.plugin }}
         run: |
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            var_name="TRMNL_PROD_PLUGIN_ID_$(echo "${{ matrix.plugin }}" | tr '[:lower:]-' '[:upper:]_')"
+          if [[ "$GIT_REF" == refs/tags/* ]]; then
+            var_name="TRMNL_PROD_PLUGIN_ID_$(echo "$PLUGIN" | tr '[:lower:]-' '[:upper:]_')"
             plugin_id="${!var_name}"
             if [ -z "$plugin_id" ]; then
-              echo "::error::No $var_name secret set for plugin '${{ matrix.plugin }}'"
+              echo "::error::No $var_name secret set for plugin '$PLUGIN'"
               exit 1
             fi
             trmnlp push --force --id "$plugin_id"
@@ -85,6 +94,8 @@ jobs:
             trmnlp push --force --id "$TRMNL_PREVIEW_PLUGIN_ID"
           fi
         env:
+          GIT_REF: ${{ github.ref }}
+          PLUGIN: ${{ matrix.plugin }}
           TRMNL_API_KEY: ${{ secrets.TRMNL_API_KEY }}
           TRMNL_PREVIEW_PLUGIN_ID: ${{ secrets.TRMNL_PREVIEW_PLUGIN_ID }}
           TRMNL_PROD_PLUGIN_ID_ENERGY_PULSE: ${{ secrets.TRMNL_PROD_PLUGIN_ID_ENERGY_PULSE }}
@@ -97,9 +108,9 @@ jobs:
       - name: Dispatch release in trmnl_apple_health
         env:
           GH_TOKEN: ${{ secrets.APPLE_HEALTH_DISPATCH_TOKEN }}
+          GIT_REF_NAME: ${{ github.ref_name }}
         run: |
-          tag="${{ github.ref_name }}"
-          version="${tag#apple_health-v}"
+          version="${GIT_REF_NAME#apple_health-v}"
           gh workflow run release.yml \
             --repo pradeepbbl/trmnl_apple_health \
             --field version="$version"
