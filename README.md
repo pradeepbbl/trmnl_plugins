@@ -10,6 +10,7 @@ independently.
 | Plugin | Description |
 | --- | --- |
 | [`energy_pulse`](energy_pulse/README.md) | Day-ahead hourly electricity prices for a European bidding zone. |
+| [`apple_health`](apple_health/README.md) | Steps, active energy, sleep, heart rate, and today's workouts from Apple Health, synced via the TRMNL Companion app. |
 
 ## Development
 
