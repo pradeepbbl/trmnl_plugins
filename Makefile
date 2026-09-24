@@ -4,7 +4,6 @@
 #   make serve PLUGIN=energy_pulse          # http://localhost:4567
 #   make lint PLUGIN=energy_pulse
 #   make build PLUGIN=energy_pulse
-#   make pull PLUGIN=energy_pulse
 #
 # Requires Docker only — no local Ruby install.
 
@@ -20,10 +19,10 @@ endif
 DOCKER_RUN := docker run --rm --pull always --net=host \
 	--volume "$(CURDIR)/$(PLUGIN):/plugin"
 
-.PHONY: help serve build lint pull test
+.PHONY: help serve build lint test
 
 help:
-	@echo "Targets: serve build lint pull test  (pass PLUGIN=<dir>, e.g. PLUGIN=energy_pulse)"
+	@echo "Targets: serve build lint test  (pass PLUGIN=<dir>, e.g. PLUGIN=energy_pulse)"
 
 serve: ## Start the live-reload preview server
 	$(DOCKER_RUN) --publish $(PORT):4567 $(IMAGE) serve
@@ -33,7 +32,4 @@ build: ## Render static HTML/PNG output to $(PLUGIN)/_build
 
 lint: ## Validate the plugin against trmnlp's best-practice checks
 	$(DOCKER_RUN) $(IMAGE) lint
-
-pull: ## Download the plugin's current state from TRMNL
-	$(DOCKER_RUN) $(IMAGE) pull
 

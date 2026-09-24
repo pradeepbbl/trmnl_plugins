@@ -60,6 +60,14 @@ jobs:
         with:
           ruby-version: "4.0"
       - run: gem install trmnl_preview -v 0.12.0
+      - name: Inject placeholder polling base URL (${{ matrix.plugin }})
+        env:
+          PLUGIN: ${{ matrix.plugin }}
+          POLLING_BASE_URL: https://example.com
+        run: |
+          settings="$PLUGIN/src/settings.yml"
+          envsubst '${POLLING_BASE_URL}' < "$settings" > "$settings.tmp"
+          mv "$settings.tmp" "$settings"
       - name: trmnlp lint (${{ matrix.plugin }})
         working-directory: ${{ matrix.plugin }}
         run: trmnlp lint
@@ -79,6 +87,18 @@ jobs:
         with:
           ruby-version: "4.0"
       - run: gem install trmnl_preview -v 0.12.0
+      - name: Inject polling base URL (${{ matrix.plugin }})
+        env:
+          PLUGIN: ${{ matrix.plugin }}
+          POLLING_BASE_URL: ${{ vars.POLLING_BASE_URL }}
+        run: |
+          if [ -z "$POLLING_BASE_URL" ]; then
+            echo "::error::POLLING_BASE_URL repo variable is not set"
+            exit 1
+          fi
+          settings="$PLUGIN/src/settings.yml"
+          envsubst '${POLLING_BASE_URL}' < "$settings" > "$settings.tmp"
+          mv "$settings.tmp" "$settings"
       - name: trmnlp push (${{ matrix.plugin }})
         working-directory: ${{ matrix.plugin }}
         run: |
