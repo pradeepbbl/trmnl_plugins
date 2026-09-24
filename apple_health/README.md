@@ -21,7 +21,7 @@ active heart rate.
 - **Strategy: webhook.** The [TRMNL Companion app](https://usetrmnl.com/companion) (iOS) reads Apple Health via HealthKit and POSTs the raw payload — `{ health: { metrics: [...], workouts: [...] } }` — to this plugin's webhook URL on each sync.
 - **`Serverless`** reduces that raw payload into the merge variables the views use: deduplicates overlapping multi-source samples (iPhone + Watch double-counting), windows everything to the user's local calendar day via `trmnl.user.utc_offset`, and computes derived stats (max heart rate during activity, resting HR from overnight samples, total active energy across background + workout streams).
 - **`Liquid Templates`** render four sizes — `full`, `half_horizontal`, `half_vertical`, `quadrant` — sharing common logic and hand-drawn monochrome icons.
-- A rolling **15-day trend history** is kept in TRMNL's per-install state store (`trmnl.state`), written each sync, for future week-over-week comparisons.
+- A rolling **30-day trend history** is kept in TRMNL's per-install state store (`trmnl.state`), written each sync, for future week-over-week comparisons.
 
 ## How to Setup
 
