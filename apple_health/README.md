@@ -2,7 +2,19 @@
 
 An [Apple Health](https://www.apple.com/ios/health/) plugin for [TRMNL](https://usetrmnl.com) — steps, active energy, sleep, resting/active heart rate, and today's workouts on your e-ink display.
 
-![Apple Health plugin — full view](docs/full-view.png)
+![full view](docs/full.png)
+
+Shown on the display: today's steps against a 10,000 goal (with a 7-day
+trend), workouts, and a bottom row of active energy, sleep, resting and
+active heart rate.
+
+| playlist |
+| --- |
+| ![](docs/playlist.png) | 
+
+| e-ink | e-ink (dark) |
+| --- | --- |
+| ![](docs/eink_light.png) | ![](docs/eink_dark.png) |
 
 ## How it works
 
