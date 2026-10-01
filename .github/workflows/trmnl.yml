@@ -72,6 +72,23 @@ jobs:
         working-directory: ${{ matrix.plugin }}
         run: trmnlp lint
 
+  # Single stable check name for the branch ruleset: the matrix `lint` job
+  # reports one check per plugin, so requiring those would need a ruleset
+  # edit every time a plugin is added.
+  lint-gate:
+    needs: lint
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          LINT_RESULT: ${{ needs.lint.result }}
+        run: |
+          # "skipped" = no plugins to lint (e.g. apple_health tag), not a failure.
+          if [ "$LINT_RESULT" != "success" ] && [ "$LINT_RESULT" != "skipped" ]; then
+            echo "::error::lint result: $LINT_RESULT"
+            exit 1
+          fi
+
   push:
     needs: [discover, lint]
     if: github.event_name == 'push' && needs.discover.outputs.plugins != '[]'

@@ -1,0 +1,37 @@
+name: Bug report
+description: Something renders wrong or doesn't work as expected
+labels: [bug, needs-triage]
+body:
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options: [energy_pulse, apple_health]
+    validations: { required: true }
+  - type: dropdown
+    id: layout
+    attributes:
+      label: Layout
+      multiple: true
+      options: [Full, Half horizontal, Half vertical, Quadrant]
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected instead.
+    validations: { required: true }
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Plugin settings used (country/zone, units, etc.). Don't paste API keys or tokens.
+  - type: input
+    id: device
+    attributes:
+      label: Device / firmware
+      placeholder: TRMNL OG, v1.x.x
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: Screenshot
+      description: Drag an image here or paste text.
