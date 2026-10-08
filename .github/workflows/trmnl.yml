@@ -148,6 +148,9 @@ jobs:
           GIT_REF_NAME: ${{ github.ref_name }}
         run: |
           version="${GIT_REF_NAME#apple_health-v}"
+          # --ref is explicit so gh doesn't look up the default branch over
+          # GraphQL, which the dispatch token isn't allowed to do.
           gh workflow run release.yml \
             --repo pradeepbbl/trmnl_apple_health \
+            --ref master \
             --field version="$version"
