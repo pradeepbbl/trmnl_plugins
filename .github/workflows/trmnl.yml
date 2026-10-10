@@ -27,8 +27,9 @@ jobs:
             tag="$GIT_REF_NAME"
             plugin="${tag%-v*}"
 
-            # Apple Health Plugin
-            if [ "$plugin" == "apple_health" ]; then
+            # Plugins whose source lives in their own private repo; their
+            # release is dispatched there (see trigger-*-release jobs below).
+            if [ "$plugin" == "apple_health" ] || [ "$plugin" == "workout_planner" ]; then
               echo "plugins=[]" >> "$GITHUB_OUTPUT"
               exit 0
             fi
@@ -154,4 +155,19 @@ jobs:
           gh workflow run release.yml \
             --repo pradeepbbl/trmnl_apple_health \
             --ref master \
+            --field version="$version"
+
+  trigger-workout-planner-release:
+    if: startsWith(github.ref, 'refs/tags/workout_planner-v')
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Dispatch release in trmnl_workout_planner
+        env:
+          GH_TOKEN: ${{ secrets.WORKOUT_PLANNER_DISPATCH_TOKEN }}
+          GIT_REF_NAME: ${{ github.ref_name }}
+        run: |
+          version="${GIT_REF_NAME#workout_planner-v}"
+          gh workflow run release.yml \
+            --repo pradeepbbl/trmnl_workout_planner \
             --field version="$version"
