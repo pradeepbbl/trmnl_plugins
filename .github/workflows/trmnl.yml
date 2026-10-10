@@ -93,6 +93,7 @@ jobs:
     needs: [discover, lint]
     if: github.event_name == 'push' && needs.discover.outputs.plugins != '[]'
     runs-on: ubuntu-latest
+    environment: ${{ startsWith(github.ref, 'refs/tags/') && 'production' || '' }}
     strategy:
       matrix:
         plugin: ${{ fromJson(needs.discover.outputs.plugins) }}
