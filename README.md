@@ -11,6 +11,7 @@ independently.
 | --- | --- |
 | [`energy_pulse`](energy_pulse/README.md) | Day-ahead hourly electricity prices for a European bidding zone. |
 | [`apple_health`](apple_health/README.md) | Steps, active energy, sleep, heart rate, and today's workouts from Apple Health, synced via the TRMNL Companion app. |
+| [`workout_planner`](workout_planner/README.md) | A fresh daily workout for the gym, home or bodyweight, with a weekly schedule, rest days and a muscle diagram. |
 
 ## Development
 
