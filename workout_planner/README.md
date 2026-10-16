@@ -24,7 +24,7 @@ Every layout size is supported, on both TRMNL X and TRMNL OG:
 
 ## What you get
 
-- **A new workout every day** for the gym, for home, or for bodyweight only.
+- **A new workout every day** for the gym, for home, or for bodyweight only, with pull-up bar exercises if you have a bar.
 - **A weekly schedule** that picks the right workout for each day. Rest days show a short recovery checklist instead.
 - **Variety.** The plan avoids repeating what you did in the last week.
 - **A muscle diagram** that shows which muscles today's workout trains.
@@ -40,7 +40,13 @@ Push, Pull, Legs, Full body, Core, Fat burn, and Stretch & mobility.
 1. **Add the plugin** to a playlist in TRMNL.
 2. **Pick a schedule** (see below).
 3. **Pick your equipment**: Gym, Home, or Bodyweight only. For Home, also choose what you have: dumbbells only, or dumbbells + barbell + bench + kettlebell.
-4. Done. A new workout appears each day, following your TRMNL account's time zone.
+4. **Pull-up bar** (Home and Bodyweight only): switch on **I have a pull-up bar** to add pull-ups, hanging raises and dips. The gym already has one, so the switch is hidden there.
+5. **Accept the health notice** (required): under **Health disclaimer**, choose **I understand and accept**. The plugin shows no workouts until you do, and the screen tells you so.
+6. Done. A new workout appears each day, following your TRMNL account's time zone.
+
+### Health notice
+
+The workouts are general fitness information, not medical advice. See a doctor if you have a condition or an injury, and stop if you feel pain or dizziness. You must accept this in the plugin settings before any workout is shown; until then the display asks you to accept it. The same notice appears in the plugin's About text.
 
 ### Schedules
 
