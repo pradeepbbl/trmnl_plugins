@@ -75,9 +75,8 @@ Use the same workout seven times for one routine every day.
 
 Instead of a generated workout, the screen can show **today's workout from your own openGym tracker**: the routines you built, with the sets and reps you set. You get a private tracker of your own, signed in with your TRMNL account (we receive only your TRMNL account ID, never your email), and the plugin reads today's plan from it.
 
-> Every picture below is a placeholder until a real screenshot replaces it. See [`docs/onboarding`](docs/onboarding/README.md) for the list.
 
-**What you need:** a TRMNL account and about five minutes. No password is created for you: you choose your own on your tracker.
+**What you need:** a TRMNL account and about five minutes. **No password is created for you: you choose your own on your tracker.**
 
 ### Step 1. Get your tracker
 
@@ -149,8 +148,6 @@ Today's routine appears with its exercises, sets and reps, muscles and rest time
 
 On a rest day you get the recovery checklist and a note about tomorrow.
 
-![Rest day](docs/onboarding/11-eink-rest-day.png)
-
 ### What is shared with TRMNL
 
 Only today's routine name, its exercises with sets and reps, your rest time, and the name and muscles of any exercise you made yourself. Nothing else leaves your tracker: no notes, weights, body measurements, history or password. Turn the button off any time: the tracker stops sending and TRMNL's copy expires within about a day and a half.
@@ -160,6 +157,7 @@ Only today's routine name, its exercises with sets and reps, your rest time, and
 The openGym mobile app signs in with two values from the page. Open **Using the mobile app? Show the app access details**, then **Copy** the **Client ID** and **Client Secret** into the app's two Cloudflare Access fields. Keep the secret private.
 
 ![Mobile app access](docs/onboarding/12-app-access.png)
+![Mobile settings](docs/onboarding/IMG_2632.png)
 
 ### Optional: the AI Coach
 
