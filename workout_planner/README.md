@@ -110,6 +110,7 @@ Instead of a generated workout, the screen can show **today's workout from your 
 2. On your tracker's first screen, create **your profile and password** (or a passkey). The first profile becomes the owner, and the tracker is closed to anyone else, so keep the password safe.
 
    ![Create your profile](docs/onboarding/05-create-profile.png)
+3. **Your tracker restarts once** right after you create the first profile, to lock it to you. Your open tracker page stops working at that point. Go back to **[setyard.app](https://setyard.app)**, wait for the top bar to show **Online** again, and choose **Open your tracker** to reconnect with a fresh link, then sign in with the password (or passkey) you just made. This only happens the first time.
 
 ### Step 3. Plan your week
 
@@ -154,10 +155,23 @@ Only today's routine name, its exercises with sets and reps, your rest time, and
 
 ### Optional: the mobile app
 
-The openGym mobile app signs in with two values from the page. Open **Using the mobile app? Show the app access details**, then **Copy** the **Client ID** and **Client Secret** into the app's two Cloudflare Access fields. Keep the secret private.
+You can use the openGym mobile app with your own tracker. Out of the box the app keeps everything on the phone; connect it to your tracker to sync your plan and workouts.
 
-![Mobile app access](docs/onboarding/12-app-access.png)
-![Mobile settings](docs/onboarding/IMG_2632.png)
+1. On setyard.app, open **Using the mobile app? Show the app access details**, then **Copy** the **Client ID** and **Client Secret**. Keep the secret private.
+
+   ![Mobile app access](docs/onboarding/12-app-access.png)
+
+2. In the app, open **Settings, Account** and choose **Connect to my server**.
+
+3. On your tracker, open **Settings, Account, Pair the mobile app**. In the app, enter your tracker's address and the pairing code shown there, then choose **Connect**.
+
+4. Your tracker is protected by Cloudflare Access, so choose **Cloudflare Access** in the app, paste the **Client ID** and **Client Secret** from step 1, and choose **Save**. They stay in the phone's secure storage and are only sent to your own tracker.
+
+5. Done. **Settings, Account** now shows your tracker and **All synced**. From here you can **Sync now**, and **Add another device** gives another phone or computer a one-time code to sign in.
+
+In the app, steps 2 to 5 look like this:
+
+![Mobile app: connect, pair, Cloudflare Access, synced](docs/onboarding/mobile-app.png)
 
 ### Optional: the AI Coach
 
@@ -175,7 +189,6 @@ Your tracker has an AI Coach that designs a plan and revises it from what you lo
 | The top bar says **Not responding** | Reload after a minute. If it stays red, contact the operator. |
 | You lost access to your tracker | Sign in with TRMNL on setyard.app again and choose **Ask for a sign-in code**. Send the reference it shows to the operator in a direct message. They reply with a one-time code that works once and expires in 24 hours. On your tracker's sign-in screen choose **Lost access?** and then **I have a code**. |
 
-![Lost access](docs/onboarding/13-recovery.png)
 
 ## Credits and privacy
 
