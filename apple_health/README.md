@@ -26,8 +26,12 @@ refreshes shows a Health Trends view (this week vs last week) instead.
 
 ## Settings
 
+- **Goal metric** — what the top card, its progress bar, the streak flames and the 7-day chart track each day: **Steps** (the default), **Active energy** or **Sleep**. Active energy is background plus workout energy, the same total as the Active Energy figure. The metric you pick moves out of the bottom row and Steps takes its place there, so nothing shows twice. Changing the metric shows on the next screen refresh, without a sync. While the chosen metric has no figure yet today, a motivational quote is shown in place of the card.
 - **Daily step goal** — steps per day the progress bar and streak count toward. Blank means 10,000. Changing it re-judges past days in the streak.
+- **Daily active energy goal (kcal)** — kcal per day when the goal metric is Active energy. Blank means 500.
+- **Daily sleep goal (hours)** — hours of sleep per night when the goal metric is Sleep, for example 7.5. Blank means 8.
 - **Trends view percentage** — share of screen refreshes (0-100) that show the Health Trends view instead of today's dashboard. 0 never shows it, 100 always does. Blank means 25.
+- **Yesterday view percentage** — share of screen refreshes (0-100) that show the same dashboard with yesterday's figures instead of today's: goal, streak, chart, active energy, sleep, heart rate and workout total. Handy early in the day, before much has been logged. It is taken after the Trends share, so the two together can't exceed 100. 0 never shows it. Blank means 0 (off). The history keeps workout totals only, so yesterday's workouts show as one total, not each activity.
 - **Debug: send raw payload** — for troubleshooting only, **Off** by default. When `On`, each sync sends your raw Apple Health data (metrics and workouts, not your name or device details) to the developer's debug endpoint, where it is kept for 1 hour and then deleted. Leave it Off normally.
 
 ## Step-goal streak
